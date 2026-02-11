@@ -246,6 +246,39 @@
    - ✅ 手动配置测试
    - ✅ 所有测试通过
 
+### ✅ 任务 15.1: 创建Redux store和slices
+
+**完成时间**: 2026-02-11
+
+**完成内容**:
+
+1. **gameSlice** (`src/store/gameSlice.ts`)
+   - ✅ 游戏状态管理（mode, countdown, fireworks, combo）
+   - ✅ `setMode()` - 设置游戏模式
+   - ✅ `updateCountdown()` - 更新倒计时
+   - ✅ `addFirework()` / `removeFirework()` / `clearFireworks()` - 烟花管理
+   - ✅ `updateCombo()` / `resetCombo()` - 连击状态管理
+   - ✅ `resetGame()` - 重置游戏状态
+   - ✅ 完整的TypeScript类型支持
+   - ✅ Redux Toolkit immer集成（不可变更新）
+
+2. **状态结构**:
+   ```typescript
+   {
+     mode: GameMode,           // 'menu' | 'single' | 'multiplayer' | 'end'
+     countdown: CountdownTime | null,
+     fireworks: FireworkInstance[],
+     combo: ComboState
+   }
+   ```
+
+3. **实现特性**:
+   - 使用Redux Toolkit的createSlice简化代码
+   - 自动生成action creators
+   - 内置immer支持不可变更新
+   - 完整的JSDoc文档
+   - 类型安全的PayloadAction
+
 ## 下一步任务
 
 参考 `.kiro/specs/new-year-fireworks-game/tasks.md` 中的任务列表：
@@ -258,6 +291,8 @@
 - 任务 10: 实现统计追踪系统
 - 任务 11: 实现主题管理系统
 - 任务 12.2-12.3: 实现响应式布局和属性测试
+- 任务 15.1: 完成其他Redux slices（audio, theme, statistics, multiplayer）
+- 任务 15.2: 集成Redux到应用
 - ...
 
 ## 技术栈确认
