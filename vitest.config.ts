@@ -17,5 +17,10 @@ export default defineConfig({
         '**/*.test.tsx',
       ],
     },
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+      },
+    },
   },
 });
