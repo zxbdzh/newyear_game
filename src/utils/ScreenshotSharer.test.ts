@@ -100,16 +100,11 @@ describe('ScreenshotSharer', () => {
 
   describe('download', () => {
     let createElementSpy: any;
-    let appendChildSpy: any;
-    let removeChildSpy: any;
     let createObjectURLSpy: any;
     let revokeObjectURLSpy: any;
 
     beforeEach(() => {
-      // Mock DOM methods
-      createElementSpy = vi.spyOn(document, 'createElement');
-      appendChildSpy = vi.spyOn(document.body, 'appendChild');
-      removeChildSpy = vi.spyOn(document.body, 'removeChild');
+      // Mock URL methods
       createObjectURLSpy = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
       revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
     });
@@ -119,22 +114,20 @@ describe('ScreenshotSharer', () => {
     });
 
     it('应该创建下载链接并触发下载', async () => {
+      const mockLink = document.createElement('a');
+      const clickSpy = vi.spyOn(mockLink, 'click');
+      createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink);
+
       await sharer.download();
 
       expect(createElementSpy).toHaveBeenCalledWith('a');
-      expect(appendChildSpy).toHaveBeenCalled();
       expect(createObjectURLSpy).toHaveBeenCalled();
+      expect(clickSpy).toHaveBeenCalled();
     });
 
     it('应该使用自定义文件名', async () => {
-      const mockLink = {
-        href: '',
-        download: '',
-        style: { display: '' },
-        click: vi.fn(),
-      };
-
-      createElementSpy.mockReturnValue(mockLink);
+      const mockLink = document.createElement('a');
+      createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink);
 
       await sharer.download({ filename: 'custom-name.png' });
 
@@ -142,14 +135,8 @@ describe('ScreenshotSharer', () => {
     });
 
     it('应该使用默认文件名（包含时间戳）', async () => {
-      const mockLink = {
-        href: '',
-        download: '',
-        style: { display: '' },
-        click: vi.fn(),
-      };
-
-      createElementSpy.mockReturnValue(mockLink);
+      const mockLink = document.createElement('a');
+      createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink);
 
       await sharer.download();
 
@@ -157,20 +144,17 @@ describe('ScreenshotSharer', () => {
     });
 
     it('应该根据格式使用正确的文件扩展名', async () => {
-      const mockLink = {
-        href: '',
-        download: '',
-        style: { display: '' },
-        click: vi.fn(),
-      };
-
-      createElementSpy.mockReturnValue(mockLink);
+      const mockLink = document.createElement('a');
+      createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink);
 
       await sharer.download({ format: 'image/jpeg' });
       expect(mockLink.download).toMatch(/\.jpg$/);
 
+      const mockLink2 = document.createElement('a');
+      createElementSpy.mockReturnValue(mockLink2);
+
       await sharer.download({ format: 'image/webp' });
-      expect(mockLink.download).toMatch(/\.webp$/);
+      expect(mockLink2.download).toMatch(/\.webp$/);
     });
   });
 
@@ -238,8 +222,9 @@ describe('ScreenshotSharer', () => {
       const originalShare = navigator.share;
       const originalCanShare = (navigator as any).canShare;
 
-      (navigator as any).share = undefined;
-      (navigator as any).canShare = undefined;
+      // Delete both properties to simulate unsupported browser
+      delete (navigator as any).share;
+      delete (navigator as any).canShare;
 
       expect(sharer.isShareSupported()).toBe(false);
 
@@ -296,6 +281,11 @@ describe('ScreenshotSharer', () => {
     it('应该在支持时调用clipboard.write', async () => {
       const mockWrite = vi.fn().mockResolvedValue(undefined);
 
+      // Mock ClipboardItem globally
+      (global as any).ClipboardItem = class ClipboardItem {
+        constructor(public data: any) {}
+      };
+
       (navigator as any).clipboard = {
         write: mockWrite,
       };
@@ -303,6 +293,9 @@ describe('ScreenshotSharer', () => {
       await sharer.copyToClipboard();
 
       expect(mockWrite).toHaveBeenCalled();
+
+      // Cleanup
+      delete (global as any).ClipboardItem;
     });
   });
 
