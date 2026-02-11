@@ -1,13 +1,26 @@
-// 本地存储类型定义
+/**
+ * 本地存储类型定义
+ * Feature: new-year-fireworks-game
+ */
 
-import type { PlayerStatistics, PerformanceProfile } from './GameTypes';
+import type { PlayerStatistics } from './StatisticsTypes';
 import type { AudioConfig } from './AudioTypes';
+import type { PerformanceProfile } from './PerformanceTypes';
 
+/**
+ * 本地存储数据
+ */
 export interface LocalStorageData {
+  /** 统计数据 */
   statistics: PlayerStatistics;
+  /** 音频配置 */
   audioConfig: AudioConfig;
+  /** 主题ID */
   themeId: string;
+  /** 皮肤ID */
   skinId: string;
+  /** 性能配置 */
   performanceProfile: PerformanceProfile;
+  /** 最后游玩时间 */
   lastPlayedAt: number;
 }
