@@ -164,13 +164,62 @@
 - ✅ 代码检查通过
 - ✅ 类型定义完整
 
+### ✅ 任务 8.3: 实现音频自动播放处理
+
+**完成时间**: 2026-02-11
+
+**完成内容**:
+
+1. **AudioAutoplayHandler类** (`src/utils/AudioAutoplayHandler.ts`)
+   - ✅ 处理浏览器自动播放限制
+   - ✅ `unlock()` - 在用户首次交互时解锁AudioContext
+   - ✅ `isUnlocked()` - 检查是否已解锁
+   - ✅ `onUnlock()` - 注册解锁回调
+   - ✅ `getContextState()` - 获取AudioContext状态
+   - ✅ 监听多种用户交互事件（click, touchstart, touchend, keydown）
+   - ✅ 自动移除事件监听器
+   - ✅ 支持回调机制
+
+2. **实现特性**:
+   - 创建静音音频节点解锁AudioContext
+   - 恢复suspended状态的AudioContext
+   - 支持多个解锁回调
+   - 已解锁时立即触发回调
+   - 完整的错误处理
+
+### ✅ 任务 9.1: 创建ComboSystem类
+
+**完成时间**: 2026-02-11
+
+**完成内容**:
+
+1. **ComboSystem类** (`src/engines/ComboSystem.ts`)
+   - ✅ `registerClick()` - 注册点击并检测连击（3秒时间窗口）
+   - ✅ `calculateMultiplier()` - 计算连击倍数
+   - ✅ `reset()` - 重置连击状态
+   - ✅ `getState()` - 获取当前连击状态
+   - ✅ `onCombo()` / `offCombo()` - 连击回调管理
+   - ✅ `clearCallbacks()` - 清除所有回调
+   - ✅ 时间窗口检测（3秒内连续点击）
+   - ✅ 连击倍数映射（2-3次：2x，4-5次：3x，6+次：烟花雨）
+   - ✅ 错误处理（回调异常捕获）
+
+2. **实现特性**:
+   - 检测快速连续点击
+   - 动态计算连击倍数
+   - 触发连击回调通知
+   - 状态不可变性（返回副本）
+   - 完整的回调管理
+
 ## 下一步任务
 
 参考 `.kiro/specs/new-year-fireworks-game/tasks.md` 中的任务列表：
 
 - 任务 7: 实现烟花引擎核心功能
-- 任务 8: 实现音频系统
-- 任务 9: 实现连击系统
+- 任务 8.1-8.2: 实现AudioController和音频属性测试
+- 任务 8.4-8.5: 集成烟花音效
+- 任务 9.2: 编写连击触发条件属性测试
+- 任务 9.3: 实现连击特效
 - ...
 
 ## 技术栈确认
