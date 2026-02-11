@@ -279,7 +279,7 @@ describe('createHourlyFireworkRainEvent', () => {
 
     // Mock Date to return exact hour
     const originalDate = Date;
-    global.Date = class extends originalDate {
+    globalThis.Date = class extends originalDate {
       getMinutes() {
         return 0;
       }
@@ -298,7 +298,7 @@ describe('createHourlyFireworkRainEvent', () => {
 
     expect(event.triggerCondition(time)).toBe(true);
 
-    global.Date = originalDate;
+    globalThis.Date = originalDate;
   });
 
   it('应该在非整点时不满足触发条件', () => {
@@ -310,7 +310,7 @@ describe('createHourlyFireworkRainEvent', () => {
     const event = createHourlyFireworkRainEvent(mockFireworksEngine);
 
     const originalDate = Date;
-    global.Date = class extends originalDate {
+    globalThis.Date = class extends originalDate {
       getMinutes() {
         return 30;
       }
@@ -329,7 +329,7 @@ describe('createHourlyFireworkRainEvent', () => {
 
     expect(event.triggerCondition(time)).toBe(false);
 
-    global.Date = originalDate;
+    globalThis.Date = originalDate;
   });
 });
 

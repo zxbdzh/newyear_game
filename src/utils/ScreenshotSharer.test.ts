@@ -101,12 +101,11 @@ describe('ScreenshotSharer', () => {
   describe('download', () => {
     let createElementSpy: any;
     let createObjectURLSpy: any;
-    let revokeObjectURLSpy: any;
 
     beforeEach(() => {
       // Mock URL methods
       createObjectURLSpy = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
-      revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
+      vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -282,8 +281,11 @@ describe('ScreenshotSharer', () => {
       const mockWrite = vi.fn().mockResolvedValue(undefined);
 
       // Mock ClipboardItem globally
-      (global as any).ClipboardItem = class ClipboardItem {
-        constructor(public data: any) {}
+      (globalThis as any).ClipboardItem = class ClipboardItem {
+        constructor(data: any) {
+          this.data = data;
+        }
+        data: any;
       };
 
       (navigator as any).clipboard = {
@@ -295,7 +297,7 @@ describe('ScreenshotSharer', () => {
       expect(mockWrite).toHaveBeenCalled();
 
       // Cleanup
-      delete (global as any).ClipboardItem;
+      delete (globalThis as any).ClipboardItem;
     });
   });
 
