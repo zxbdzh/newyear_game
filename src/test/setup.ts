@@ -2,7 +2,9 @@ import { afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-// Mock IndexedDB
+// Mock IndexedDB with persistent storage
+const mockStorage = new Map<string, any>();
+
 class MockIDBDatabase {
   objectStoreNames = { contains: () => false };
   createObjectStore() {
@@ -13,11 +15,49 @@ class MockIDBDatabase {
   transaction() {
     return {
       objectStore: () => ({
-        get: () => ({ onsuccess: null, onerror: null }),
-        put: () => ({ onsuccess: null, onerror: null }),
-        delete: () => ({ onsuccess: null, onerror: null }),
+        get: (key: string) => {
+          const request = { onsuccess: null, onerror: null, result: mockStorage.get(key) || null } as any;
+          Promise.resolve().then(() => {
+            if (request.onsuccess) {
+              request.onsuccess({ target: { result: request.result } });
+            }
+          });
+          return request;
+        },
+        put: (data: any, key: string) => {
+          mockStorage.set(key, data);
+          const request = { onsuccess: null, onerror: null } as any;
+          Promise.resolve().then(() => {
+            if (request.onsuccess) {
+              request.onsuccess({ target: { result: undefined } });
+            }
+          });
+          return request;
+        },
+        clear: () => {
+          mockStorage.clear();
+          const request = { onsuccess: null, onerror: null } as any;
+          Promise.resolve().then(() => {
+            if (request.onsuccess) {
+              request.onsuccess({ target: { result: undefined } });
+            }
+          });
+          return request;
+        },
+        delete: (key: string) => {
+          mockStorage.delete(key);
+          const request = { onsuccess: null, onerror: null } as any;
+          Promise.resolve().then(() => {
+            if (request.onsuccess) {
+              request.onsuccess({ target: { result: undefined } });
+            }
+          });
+          return request;
+        },
         openCursor: () => ({ onsuccess: null, onerror: null })
-      })
+      }),
+      error: null,
+      onerror: null
     };
   }
   close() {}
