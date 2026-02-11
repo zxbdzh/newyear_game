@@ -73,8 +73,8 @@ class MockAudioContext {
 }
 
 // Mock global AudioContext
-(global as any).AudioContext = MockAudioContext;
-(global as any).window = { AudioContext: MockAudioContext };
+(globalThis as any).AudioContext = MockAudioContext;
+(globalThis as any).window = { AudioContext: MockAudioContext };
 
 describe('AudioController - Property-Based Tests', () => {
   let storageService: StorageService;

@@ -80,9 +80,9 @@ export class AudioController {
    */
   private async loadConfig(): Promise<void> {
     try {
-      const savedConfig = await this.storageService.load<AudioConfig>('audioConfig');
-      if (savedConfig) {
-        this.config = { ...this.config, ...savedConfig };
+      const savedData = await this.storageService.load();
+      if (savedData && savedData.audioConfig) {
+        this.config = { ...this.config, ...savedData.audioConfig };
       }
     } catch (error) {
       console.warn('Failed to load audio config, using defaults:', error);
@@ -439,7 +439,17 @@ export class AudioController {
    */
   async saveConfig(): Promise<void> {
     try {
-      await this.storageService.save('audioConfig', this.config);
+      // 加载现有数据
+      const existingData = await this.storageService.load();
+      
+      // 更新音频配置
+      const updatedData = {
+        ...existingData,
+        audioConfig: this.config,
+        lastPlayedAt: Date.now()
+      } as any;
+      
+      await this.storageService.save(updatedData);
     } catch (error) {
       console.error('Failed to save audio config:', error);
       throw error;
