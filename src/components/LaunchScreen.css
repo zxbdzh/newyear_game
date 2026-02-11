@@ -1,0 +1,322 @@
+/**
+ * 启动界面样式
+ * Feature: new-year-fireworks-game
+ */
+
+.launch-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #8b0000 0%, #dc143c 50%, #ff6347 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 新年主题背景 */
+.launch-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* 红灯笼装饰 */
+.lantern {
+  position: absolute;
+  top: 20px;
+  width: 80px;
+  height: 100px;
+  background: radial-gradient(circle, #ff0000 0%, #cc0000 70%, #990000 100%);
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: 0 10px 30px rgba(255, 0, 0, 0.5);
+  animation: swing 3s ease-in-out infinite;
+}
+
+.lantern::before {
+  content: '福';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffd700;
+  font-size: 32px;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.lantern::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 20px;
+  background: #ffd700;
+  border-radius: 0 0 50% 50%;
+}
+
+.lantern-left {
+  left: 50px;
+  animation-delay: 0s;
+}
+
+.lantern-right {
+  right: 50px;
+  animation-delay: 1.5s;
+}
+
+@keyframes swing {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+/* 对联装饰 */
+.couplet {
+  position: absolute;
+  top: 100px;
+  width: 60px;
+  padding: 20px 10px;
+  background: linear-gradient(180deg, #8b0000 0%, #dc143c 100%);
+  border: 3px solid #ffd700;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+.couplet span {
+  color: #ffd700;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.couplet-left {
+  left: 150px;
+}
+
+.couplet-right {
+  right: 150px;
+}
+
+/* 飘雪动画 */
+.snowflakes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.snowflake {
+  position: absolute;
+  top: -10%;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 20px;
+  animation: fall linear infinite;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes fall {
+  0% {
+    top: -10%;
+    opacity: 1;
+  }
+  100% {
+    top: 110%;
+    opacity: 0.3;
+  }
+}
+
+/* 主要内容 */
+.launch-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.launch-title {
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffd700;
+  margin: 0 0 10px 0;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+               0 0 40px rgba(255, 215, 0, 0.5);
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+                 0 0 40px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(255, 215, 0, 1),
+                 0 0 60px rgba(255, 215, 0, 0.8);
+  }
+}
+
+.launch-subtitle {
+  font-size: 20px;
+  color: #fff;
+  margin: 0 0 40px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 点击开始按钮 */
+.launch-button {
+  position: relative;
+  padding: 16px 48px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #ff6347 0%, #dc143c 100%);
+  border: 3px solid #ffd700;
+  border-radius: 50px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 20, 60, 0.5);
+}
+
+.launch-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(220, 20, 60, 0.7);
+}
+
+.launch-button:active {
+  transform: scale(0.98);
+}
+
+.button-text {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.button-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 网络状态指示器 */
+.network-status {
+  margin-top: 30px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.network-status.online {
+  background: rgba(34, 197, 94, 0.2);
+  border: 2px solid rgba(34, 197, 94, 0.5);
+  color: #86efac;
+}
+
+.network-status.offline {
+  background: rgba(239, 68, 68, 0.2);
+  border: 2px solid rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.status-icon {
+  font-size: 18px;
+}
+
+.status-text {
+  font-weight: 500;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .lantern {
+    width: 60px;
+    height: 75px;
+  }
+  
+  .lantern::before {
+    font-size: 24px;
+  }
+  
+  .lantern-left {
+    left: 20px;
+  }
+  
+  .lantern-right {
+    right: 20px;
+  }
+  
+  .couplet {
+    display: none;
+  }
+  
+  .launch-title {
+    font-size: 36px;
+  }
+  
+  .launch-subtitle {
+    font-size: 16px;
+  }
+  
+  .launch-button {
+    padding: 12px 36px;
+    font-size: 20px;
+  }
+  
+  .launch-content {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .launch-title {
+    font-size: 28px;
+  }
+  
+  .launch-subtitle {
+    font-size: 14px;
+  }
+  
+  .launch-button {
+    padding: 10px 30px;
+    font-size: 18px;
+  }
+}
