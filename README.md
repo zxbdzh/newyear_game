@@ -68,10 +68,23 @@ pnpm run preview
 
 ```cmd
 pnpm test              # 运行所有测试
+pnpm test --run        # 单次运行（不使用watch模式）
 pnpm test:unit         # 运行单元测试
 pnpm test:pbt          # 运行属性测试
 pnpm test:ui           # 测试UI界面
 ```
+
+#### 属性测试 (Property-Based Testing)
+
+项目使用 [fast-check](https://github.com/dubzzz/fast-check) 进行属性测试，验证系统的正确性属性。属性测试文件使用 `.pbt.test.ts` 后缀。
+
+**网络同步属性测试** (`src/services/NetworkSynchronizer.pbt.test.ts`):
+- **属性 15**: 烟花动作广播 - 验证烟花动作正确广播到房间内所有其他玩家
+- **属性 16**: 在线玩家数量一致性 - 验证显示的玩家数量与实际一致
+- **属性 17**: 排行榜排序正确性 - 验证TOP3玩家按烟花数量降序排列
+- **属性 27**: 房间容量限制 - 验证房间满员时拒绝新玩家加入
+
+每个属性测试运行100次迭代，使用随机生成的测试数据验证系统不变量。
 
 ### 代码质量
 
