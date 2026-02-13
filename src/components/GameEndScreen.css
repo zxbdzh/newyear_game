@@ -30,7 +30,7 @@
 }
 
 /* 烟花画布 */
-.fireworks-canvas {
+.game-end-screen .fireworks-canvas {
   position: absolute;
   top: 0;
   left: 0;

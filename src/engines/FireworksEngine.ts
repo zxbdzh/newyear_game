@@ -431,12 +431,8 @@ export class FireworksEngine {
     this.update(deltaTime);
     this.render();
 
-    // 如果还有烟花，继续动画
-    if (this.fireworks.length > 0) {
-      this.animationId = requestAnimationFrame(() => this.animate());
-    } else {
-      this.animationId = null;
-    }
+    // 持续运行动画循环，即使没有烟花也要保持清空画布
+    this.animationId = requestAnimationFrame(() => this.animate());
   }
 
   /**

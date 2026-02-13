@@ -81,6 +81,9 @@ export function CountdownDisplay({ engine, onCountdownZero }: CountdownDisplayPr
 
   return (
     <div className="countdown-display">
+      {/* 倒计时标题 */}
+      <div className="countdown-title">新年倒计时：</div>
+      
       {/* 3D倒计时文本 */}
       <div className={`countdown-container ${isLessThanOneHour ? 'urgent' : ''}`}>
         {/* 天数 */}

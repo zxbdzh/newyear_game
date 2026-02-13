@@ -300,6 +300,7 @@ const handleSaveSettings = async (settings: SettingsData) => {
 - 响应式Canvas尺寸调整
 - 游戏时间追踪和持久化
 - 连击状态实时显示
+- 持续动画循环 - FireworksEngine保持动画循环运行，确保Canvas始终清空并准备接收新烟花
 
 **状态管理**:
 - Redux集成（音频配置、连击状态、统计数据）
