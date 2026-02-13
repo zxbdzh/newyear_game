@@ -23,6 +23,14 @@ export class CountdownEngine {
    * @param config - 倒计时配置
    */
   constructor(config: CountdownConfig) {
+    // 如果目标日期是当前日期或已过期，自动设置为下一个农历新年
+    const targetDate = new Date(config.targetDate);
+    const now = new Date();
+    
+    if (targetDate <= now) {
+      config.targetDate = CountdownEngine.getNextLunarNewYear();
+    }
+    
     this.config = config;
   }
 
@@ -41,7 +49,7 @@ export class CountdownEngine {
     let lunarNewYear = new Date(solar.getYear(), solar.getMonth() - 1, solar.getDay());
     
     // 如果今年的农历新年已经过去，获取下一年的
-    if (lunarNewYear < now) {
+    if (lunarNewYear <= now) {
       const nextLunar = Lunar.fromYmd(currentYear + 1, 1, 1);
       const nextSolar = nextLunar.getSolar();
       lunarNewYear = new Date(nextSolar.getYear(), nextSolar.getMonth() - 1, nextSolar.getDay());

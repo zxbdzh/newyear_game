@@ -87,7 +87,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         
         // 创建倒计时引擎
         const countdownEngine = new CountdownEngine({
-          targetDate: new Date(), // 将由引擎自动计算农历新年
+          targetDate: CountdownEngine.getNextLunarNewYear(), // 自动计算下一个农历新年
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           manualOffset: 0,
         });
