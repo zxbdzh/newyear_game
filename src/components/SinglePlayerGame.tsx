@@ -17,7 +17,7 @@ import { PerformanceOptimizer } from '../services/PerformanceOptimizer';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateCombo, resetCombo } from '../store/gameSlice';
 import { recordClick, recordCombo } from '../store/statisticsSlice';
-import { toggleMusicMute } from '../store/audioSlice';
+import { toggleMusicMute, updateAudioConfig } from '../store/audioSlice';
 import type { ComboState } from '../types';
 import './SinglePlayerGame.css';
 
@@ -83,6 +83,10 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         await audioController.resumeContext();
         audioControllerRef.current = audioController;
         
+        // 同步 AudioController 的配置到 Redux store
+        const loadedConfig = audioController.getConfig();
+        dispatch(updateAudioConfig(loadedConfig));
+        
         // 创建统计追踪器
         const statisticsTracker = new StatisticsTracker(storageService);
         await statisticsTracker.load();
@@ -129,8 +133,8 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         
         comboSystemRef.current = comboSystem;
         
-        // 播放背景音乐
-        if (!audioConfig.musicMuted) {
+        // 播放背景音乐（使用从存储加载的配置）
+        if (!loadedConfig.musicMuted) {
           audioController.playMusic();
         }
         
