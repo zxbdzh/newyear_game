@@ -14,6 +14,7 @@ import { AudioController } from '../services/AudioController';
 import { StatisticsTracker } from '../services/StatisticsTracker';
 import { StorageService } from '../services/StorageService';
 import { PerformanceOptimizer } from '../services/PerformanceOptimizer';
+import { ThemeManager } from '../services/ThemeManager';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateCombo, resetCombo } from '../store/gameSlice';
 import { recordClick, recordCombo } from '../store/statisticsSlice';
@@ -35,6 +36,7 @@ interface SinglePlayerGameProps {
 export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
   const dispatch = useAppDispatch();
   const audioConfig = useAppSelector((state) => state.audio.config);
+  const currentTheme = useAppSelector((state) => state.theme.currentTheme);
   
   // Canvas引用
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,6 +49,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
   const statisticsTrackerRef = useRef<StatisticsTracker | null>(null);
   const performanceOptimizerRef = useRef<PerformanceOptimizer | null>(null);
   const storageServiceRef = useRef<StorageService | null>(null);
+  const themeManagerRef = useRef<ThemeManager | null>(null);
   
   // 游戏时间追踪
   const gameStartTimeRef = useRef<number>(Date.now());
@@ -76,6 +79,10 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         // 创建性能优化器
         const performanceOptimizer = new PerformanceOptimizer();
         performanceOptimizerRef.current = performanceOptimizer;
+        
+        // 创建主题管理器
+        const themeManager = new ThemeManager();
+        themeManagerRef.current = themeManager;
         
         // 创建音频控制器
         const audioController = new AudioController(storageService);
@@ -173,6 +180,13 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
       }
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 应用主题
+  useEffect(() => {
+    if (themeManagerRef.current && currentTheme) {
+      themeManagerRef.current.applyTheme(currentTheme);
+    }
+  }, [currentTheme]);
 
   // 处理Canvas尺寸调整
   useEffect(() => {
@@ -306,6 +320,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
       if (storageServiceRef.current) {
         const data = await storageServiceRef.current.load();
         if (data) {
+          // 更新主题和皮肤ID
           data.themeId = settings.themeId;
           data.skinId = settings.skinId;
           data.performanceProfile = {
@@ -318,6 +333,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
             enableTrails: false,
           };
           await storageServiceRef.current.save(data);
+          console.log('[SinglePlayerGame] 设置已保存');
         }
       }
     } catch (error) {

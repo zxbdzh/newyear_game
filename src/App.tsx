@@ -11,6 +11,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { setMode } from './store/gameSlice';
 import { toggleMusicMute } from './store/audioSlice';
+import { setTheme, setSkin } from './store/themeSlice';
 import { LaunchScreen } from './components/LaunchScreen';
 import { ModeSelection } from './components/ModeSelection';
 import { SinglePlayerGame } from './components/SinglePlayerGame';
@@ -19,6 +20,7 @@ import { GameEndScreen } from './components/GameEndScreen';
 import { NetworkSynchronizer } from './services/NetworkSynchronizer';
 import { AudioController } from './services/AudioController';
 import { StorageService } from './services/StorageService';
+import { ThemeManager } from './services/ThemeManager';
 import type { GameMode } from './types/GameTypes';
 import './App.css';
 
@@ -29,6 +31,9 @@ function App() {
   const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.game.mode);
   const isMusicMuted = useAppSelector((state) => state.audio.config.musicMuted);
+  const availableThemes = useAppSelector((state) => state.theme.availableThemes);
+  const availableSkins = useAppSelector((state) => state.theme.availableSkins);
+  const currentTheme = useAppSelector((state) => state.theme.currentTheme);
   
   // 应用状态
   const [hasStarted, setHasStarted] = useState(false);
@@ -40,6 +45,7 @@ function App() {
   const audioControllerRef = useRef<AudioController | null>(null);
   const networkSynchronizerRef = useRef<NetworkSynchronizer | null>(null);
   const storageServiceRef = useRef<StorageService | null>(null);
+  const themeManagerRef = useRef<ThemeManager | null>(null);
 
   /**
    * 初始化服务
@@ -50,6 +56,50 @@ function App() {
         // 创建存储服务
         const storageService = new StorageService();
         storageServiceRef.current = storageService;
+
+        // 创建主题管理器
+        const themeManager = new ThemeManager();
+        themeManagerRef.current = themeManager;
+
+        // 加载保存的设置并恢复主题和皮肤
+        try {
+          const savedData = await storageService.load();
+          if (savedData) {
+            // 恢复主题
+            if (savedData.themeId) {
+              const theme = availableThemes.find(t => t.id === savedData.themeId);
+              if (theme) {
+                dispatch(setTheme(savedData.themeId));
+                themeManager.applyTheme(theme);
+                console.log('[App] 已恢复主题:', savedData.themeId);
+              } else {
+                console.warn(`[App] 主题 ${savedData.themeId} 不存在，使用默认主题`);
+                themeManager.applyTheme(currentTheme);
+              }
+            } else {
+              // 应用默认主题
+              themeManager.applyTheme(currentTheme);
+            }
+
+            // 恢复皮肤
+            if (savedData.skinId) {
+              const skin = availableSkins.find(s => s.id === savedData.skinId);
+              if (skin) {
+                dispatch(setSkin(savedData.skinId));
+                console.log('[App] 已恢复皮肤:', savedData.skinId);
+              } else {
+                console.warn(`[App] 皮肤 ${savedData.skinId} 不存在，使用默认皮肤`);
+              }
+            }
+          } else {
+            // 首次加载，应用默认主题
+            themeManager.applyTheme(currentTheme);
+            console.log('[App] 首次加载，使用默认主题');
+          }
+        } catch (error) {
+          console.error('[App] 加载设置失败，使用默认主题:', error);
+          themeManager.applyTheme(currentTheme);
+        }
 
         // 创建音频控制器
         const audioController = new AudioController(storageService);
@@ -82,7 +132,7 @@ function App() {
         networkSynchronizerRef.current.disconnect();
       }
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * 处理页面卸载前保存

@@ -503,6 +503,99 @@ const SinglePlayerGame = () => {
 };
 ```
 
+## 服务层集成
+
+### ThemeManager（主题管理器）
+**文件**: `../services/ThemeManager.ts`
+
+**功能**:
+- 应用主题到DOM（通过CSS变量）
+- 读取当前应用的主题颜色
+
+**接口**:
+```typescript
+interface Theme {
+  id: string;
+  name: string;
+  backgroundImage?: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+}
+```
+
+**需求**: 1.1, 1.2（settings-ui-fixes spec）
+
+**特性**:
+- 轻量级设计（无状态管理）
+- 直接操作CSS自定义属性
+- 支持背景图片（可选）
+- 提供颜色读取功能
+
+**使用示例**:
+```typescript
+import { ThemeManager } from '@/services/ThemeManager';
+
+// 创建主题管理器实例
+const themeManager = new ThemeManager();
+
+// 应用主题
+const theme = {
+  id: 'new-year-dinner',
+  name: '年夜饭场景',
+  primaryColor: '#D32F2F',
+  secondaryColor: '#FFD700',
+  accentColor: '#FF6B6B',
+  backgroundImage: '/themes/new-year-dinner.jpg'
+};
+
+themeManager.applyTheme(theme);
+
+// 读取当前主题颜色
+const colors = themeManager.getCurrentThemeColors();
+console.log(colors.primary); // '#D32F2F'
+```
+
+**CSS变量**:
+ThemeManager设置以下CSS自定义属性：
+- `--color-primary`: 主色
+- `--color-secondary`: 次色
+- `--color-accent`: 强调色
+- `--bg-image`: 背景图片（可选）
+
+**在组件中使用**:
+```typescript
+// 在SinglePlayerGame中应用主题
+useEffect(() => {
+  if (themeManagerRef.current && currentTheme) {
+    themeManagerRef.current.applyTheme(currentTheme);
+  }
+}, [currentTheme]);
+```
+
+**CSS中使用主题变量**:
+```css
+.single-player-game {
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary, #0a0e27) 0%,
+    var(--color-secondary, #1a1a2e) 50%,
+    var(--color-accent, #16213e) 100%
+  );
+}
+
+.button-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-accent);
+}
+```
+
+**设计说明**:
+- ThemeManager现在是一个简单的工具类，不管理主题列表或持久化
+- 主题数据由Redux store管理（themeSlice）
+- 持久化由StorageService处理
+- 这种设计遵循单一职责原则，使代码更易维护
+
 ## 下一步
 
-任务26.1已完成触摸事件处理实现。接下来将进行移动端性能优化（任务26.2）和移动端测试（任务26.3）。
+任务26（移动端优化和测试）已完成。ThemeManager已简化为轻量级服务，专注于CSS变量应用。
