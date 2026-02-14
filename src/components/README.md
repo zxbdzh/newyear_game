@@ -202,6 +202,14 @@ AudioController现在包含音频播放状态追踪和并发音效限制：
   - `couplet`（对联样式）：金色文字，书法风格
   - `zodiac`（生肖样式）：多彩渐变，生肖元素
 
+**测试覆盖**:
+- `CountdownDisplay.test.tsx` - 基础功能测试
+- `CountdownDisplay.skin.test.tsx` - 皮肤系统测试（验证需求 2.1, 2.2, 2.3）
+  - 默认皮肤应用
+  - 三种皮肤样式（灯笼、对联、生肖）
+  - 皮肤动态切换
+  - CSS类名正确性
+
 ### SettingsScreen（设置界面）
 **文件**: `SettingsScreen.tsx`, `SettingsScreen.css`
 

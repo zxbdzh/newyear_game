@@ -28,6 +28,8 @@ interface SettingsScreenProps {
   onSave: (settings: SettingsData) => void;
   /** 音频控制器引用 */
   audioController?: AudioController | null;
+  /** 烟花引擎引用 */
+  fireworksEngine?: any | null;
 }
 
 export interface SettingsData {
@@ -49,6 +51,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onClose,
   onSave,
   audioController,
+  fireworksEngine,
 }) => {
   const dispatch = useDispatch();
   
@@ -159,6 +162,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       performanceLevel: localPerformanceLevel,
       manualOffset: localManualOffset,
     };
+    
+    // 应用性能配置到烟花引擎
+    if (fireworksEngine) {
+      fireworksEngine.updatePerformanceProfile({
+        level: localPerformanceLevel,
+      });
+    }
+    
     onSave(settings);
     onClose();
   };

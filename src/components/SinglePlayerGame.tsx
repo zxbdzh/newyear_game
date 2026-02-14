@@ -491,6 +491,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         onClose={handleCloseSettings}
         onSave={handleSaveSettings}
         audioController={audioControllerRef.current}
+        fireworksEngine={fireworksEngineRef.current}
       />
     </div>
   );

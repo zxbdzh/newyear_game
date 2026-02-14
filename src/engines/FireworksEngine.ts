@@ -73,6 +73,15 @@ export class FireworksEngine {
   private animationId: number | null = null;
   private lastUpdateTime: number = 0;
   private audioController: any | null = null; // AudioController类型
+  private performanceProfile: {
+    maxParticles: number;
+    enableGlow: boolean;
+    enableTrails: boolean;
+  } = {
+    maxParticles: 100,
+    enableGlow: true,
+    enableTrails: false,
+  };
 
   /**
    * 构造函数
@@ -334,7 +343,9 @@ export class FireworksEngine {
    */
   private createParticles(x: number, y: number, type: FireworkType): Particle[] {
     const particles: Particle[] = [];
-    const count = type.particleCount;
+    // 应用性能配置限制粒子数量
+    const baseCount = type.particleCount;
+    const count = Math.floor((baseCount * this.performanceProfile.maxParticles) / 100);
 
     for (let i = 0; i < count; i++) {
       const particle = this.particlePool.acquire();
@@ -509,10 +520,33 @@ export class FireworksEngine {
 
         this.ctx.save();
         this.ctx.globalAlpha = particle.alpha;
+        
+        // 应用光晕效果（如果启用）
+        if (this.performanceProfile.enableGlow) {
+          this.ctx.shadowBlur = 10;
+          this.ctx.shadowColor = particle.color;
+        }
+        
         this.ctx.fillStyle = particle.color;
         this.ctx.beginPath();
         this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         this.ctx.fill();
+        
+        // 应用拖尾效果（如果启用）
+        if (this.performanceProfile.enableTrails && (particle.vx !== 0 || particle.vy !== 0)) {
+          const trailLength = 10;
+          const trailX = particle.x - particle.vx * 0.5;
+          const trailY = particle.y - particle.vy * 0.5;
+          
+          this.ctx.globalAlpha = particle.alpha * 0.3;
+          this.ctx.strokeStyle = particle.color;
+          this.ctx.lineWidth = particle.size * 0.5;
+          this.ctx.beginPath();
+          this.ctx.moveTo(particle.x, particle.y);
+          this.ctx.lineTo(trailX, trailY);
+          this.ctx.stroke();
+        }
+        
         this.ctx.restore();
       }
 
@@ -562,14 +596,47 @@ export class FireworksEngine {
   }
   /**
    * 更新性能配置
-   * 需求：10.1, 10.5
+   * 需求：3.1, 3.2, 3.3, 3.4
    *
    * @param profile - 性能配置
    */
   updatePerformanceProfile(profile: any): void {
-    // 这个方法用于接收性能配置更新
-    // 实际的性能限制会在launchFirework和createParticles中应用
-    console.log('Performance profile updated:', profile);
+    // 根据性能级别设置配置
+    switch (profile.level) {
+      case 'low':
+        // 低性能：50%粒子，禁用光晕和拖尾
+        this.performanceProfile = {
+          maxParticles: 50,
+          enableGlow: false,
+          enableTrails: false,
+        };
+        break;
+      case 'medium':
+        // 中性能：100%粒子，启用光晕，禁用拖尾
+        this.performanceProfile = {
+          maxParticles: 100,
+          enableGlow: true,
+          enableTrails: false,
+        };
+        break;
+      case 'high':
+        // 高性能：150%粒子，启用光晕和拖尾
+        this.performanceProfile = {
+          maxParticles: 150,
+          enableGlow: true,
+          enableTrails: true,
+        };
+        break;
+      default:
+        // 默认使用中性能
+        this.performanceProfile = {
+          maxParticles: 100,
+          enableGlow: true,
+          enableTrails: false,
+        };
+    }
+    
+    console.log('Performance profile updated:', this.performanceProfile);
   }
 }
 

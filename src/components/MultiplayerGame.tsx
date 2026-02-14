@@ -381,6 +381,8 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         isOpen={showSettings}
         onClose={handleCloseSettings}
         onSave={handleSaveSettings}
+        audioController={audioControllerRef.current}
+        fireworksEngine={engineRef.current}
       />
     </div>
   );
