@@ -399,31 +399,37 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         {/* 控制按钮 */}
         <div className="control-buttons">
           <button
-            className="control-button mute-button"
+            className="control-button-with-label mute-button"
             onClick={handleToggleMute}
             aria-label={audioConfig.musicMuted ? '取消静音' : '静音'}
             title={audioConfig.musicMuted ? '取消静音' : '静音'}
           >
-            {audioConfig.musicMuted ? (
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10 4L6 8H2v4h4l4 4V4zm6 2l-2 2 2 2-2 2 2 2 2-2-2-2 2-2-2-2z"/>
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10 4L6 8H2v4h4l4 4V4zm4 6c0-1.5-1-3-2-3.5v7c1-.5 2-2 2-3.5zm2 0c0-2.5-1.5-4.5-3.5-5.5v11c2-.5 3.5-3 3.5-5.5z"/>
-              </svg>
-            )}
+            <span className="button-icon">
+              {audioConfig.musicMuted ? (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 4L6 8H2v4h4l4 4V4zm6 2l-2 2 2 2-2 2 2 2 2-2-2-2 2-2-2-2z"/>
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 4L6 8H2v4h4l4 4V4zm4 6c0-1.5-1-3-2-3.5v7c1-.5 2-2 2-3.5zm2 0c0-2.5-1.5-4.5-3.5-5.5v11c2-.5 3.5-3 3.5-5.5z"/>
+                </svg>
+              )}
+            </span>
+            <span className="button-label">{audioConfig.musicMuted ? '已静音' : '音乐'}</span>
           </button>
           
           <button
-            className="control-button settings-button"
+            className="control-button-with-label settings-button"
             onClick={handleOpenSettings}
             aria-label="设置"
             title="设置"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10 6c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm8-1l-2-1-1-2-2 1-2-1-2 1-1 2-2 1v2l2 1 1 2 2-1 2 1 2-1 1-2 2-1V5z"/>
-            </svg>
+            <span className="button-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 6c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm8-1l-2-1-1-2-2 1-2-1-2 1-1 2-2 1v2l2 1 1 2 2-1 2 1 2-1 1-2 2-1V5z"/>
+              </svg>
+            </span>
+            <span className="button-label">设置</span>
           </button>
         </div>
       </div>
