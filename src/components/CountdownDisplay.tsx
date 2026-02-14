@@ -14,17 +14,22 @@ interface CountdownDisplayProps {
   engine: CountdownEngine;
   /** 倒计时归零时的回调 */
   onCountdownZero?: () => void;
+  /** 皮肤ID */
+  skinId?: string;
 }
 
 /**
  * 倒计时显示组件
  * 以3D渲染方式显示距离农历新年的剩余时间
  */
-export function CountdownDisplay({ engine, onCountdownZero }: CountdownDisplayProps) {
+export function CountdownDisplay({ engine, onCountdownZero, skinId = 'lantern' }: CountdownDisplayProps) {
   const [time, setTime] = useState<CountdownTime>(engine.getCurrentTime());
   const [showCalibration, setShowCalibration] = useState(false);
   const [offsetInput, setOffsetInput] = useState('0');
   const [isLessThanOneHour, setIsLessThanOneHour] = useState(false);
+
+  // 根据皮肤ID应用样式类
+  const skinClass = `countdown-display countdown-display--${skinId}`;
 
   // 更新倒计时显示
   const handleTimeUpdate = useCallback((newTime: CountdownTime) => {
@@ -80,7 +85,7 @@ export function CountdownDisplay({ engine, onCountdownZero }: CountdownDisplayPr
   };
 
   return (
-    <div className="countdown-display">
+    <div className={skinClass}>
       {/* 倒计时标题 */}
       <div className="countdown-title">新年倒计时：</div>
       

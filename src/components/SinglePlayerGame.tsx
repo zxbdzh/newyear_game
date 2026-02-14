@@ -37,6 +37,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
   const dispatch = useAppDispatch();
   const audioConfig = useAppSelector((state) => state.audio.config);
   const currentTheme = useAppSelector((state) => state.theme.currentTheme);
+  const currentSkin = useAppSelector((state) => state.theme.currentSkin);
   
   // Canvas引用
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -408,6 +409,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
             <CountdownDisplay
               engine={countdownEngineRef.current}
               onCountdownZero={handleCountdownZero}
+              skinId={currentSkin.id}
             />
           )}
         </div>

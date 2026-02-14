@@ -119,10 +119,12 @@ pnpm test --run
 - 少于1小时时的特殊效果（闪烁、红色光晕）
 - 手动时间校准功能（偏移调整）
 - 倒计时归零触发回调
+- 支持皮肤切换（灯笼、对联、生肖样式）
 
 **Props**:
 - `engine: CountdownEngine` - 倒计时引擎实例
 - `onCountdownZero?: () => void` - 倒计时归零时的回调（可选）
+- `skinId?: string` - 皮肤ID，用于应用不同的倒计时样式（可选，默认'lantern'）
 
 **需求**: 2.1, 2.3, 2.5
 
@@ -136,6 +138,7 @@ pnpm test --run
 ```tsx
 import { CountdownDisplay } from './components/CountdownDisplay';
 import { CountdownEngine } from './engines/CountdownEngine';
+import { useAppSelector } from '@/store';
 
 // 创建倒计时引擎实例
 const countdownEngine = useMemo(() => {
@@ -147,9 +150,13 @@ const countdownEngine = useMemo(() => {
   });
 }, []);
 
+// 从Redux获取当前皮肤
+const currentSkin = useAppSelector((state) => state.theme.currentSkin);
+
 // 使用组件
 <CountdownDisplay 
   engine={countdownEngine}
+  skinId={currentSkin.id}
   onCountdownZero={() => {
     console.log('新年到了！');
     dispatch(setMode('ended'));
@@ -190,6 +197,10 @@ AudioController现在包含音频播放状态追踪和并发音效限制：
 - 紧急状态样式（`urgent`类，红色闪烁）
 - 校准对话框（模态覆盖层）
 - 响应式字体大小
+- 皮肤样式支持（通过`countdown-display--{skinId}`类名应用）
+  - `lantern`（灯笼样式）：传统红色，温暖光晕
+  - `couplet`（对联样式）：金色文字，书法风格
+  - `zodiac`（生肖样式）：多彩渐变，生肖元素
 
 ### SettingsScreen（设置界面）
 **文件**: `SettingsScreen.tsx`, `SettingsScreen.css`

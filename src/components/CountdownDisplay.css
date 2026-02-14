@@ -330,3 +330,163 @@
     padding: 1rem;
   }
 }
+
+/* ========================================
+   皮肤样式 (Skin Styles)
+   ======================================== */
+
+/* 灯笼皮肤 (Lantern Skin) */
+.countdown-display--lantern {
+  /* 使用默认样式，保持现有的金色主题 */
+}
+
+.countdown-display--lantern .time-value {
+  font-family: 'KaiTi', 'STKaiti', '楷体', serif;
+  color: #FFD700;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 0 20px rgba(255, 215, 0, 0.6),
+    0 0 30px rgba(255, 215, 0, 0.4),
+    0 1px 0 #ccc,
+    0 2px 0 #c9c9c9,
+    0 3px 0 #bbb,
+    0 4px 0 #b9b9b9,
+    0 5px 0 #aaa,
+    0 6px 1px rgba(0,0,0,.1),
+    0 0 5px rgba(0,0,0,.1),
+    0 1px 3px rgba(0,0,0,.3),
+    0 3px 5px rgba(0,0,0,.2),
+    0 5px 10px rgba(0,0,0,.25),
+    0 10px 10px rgba(0,0,0,.2),
+    0 20px 20px rgba(0,0,0,.15);
+}
+
+.countdown-display--lantern .countdown-title {
+  color: #FFD700;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.countdown-display--lantern .time-separator {
+  color: #FFD700;
+}
+
+/* 对联皮肤 (Couplet Skin) */
+.countdown-display--couplet {
+  /* 对联风格：红色主题，传统书法字体 */
+}
+
+.countdown-display--couplet .time-value {
+  font-family: 'STXingkai', 'FZXingKai-S04S', '华文行楷', 'KaiTi', serif;
+  color: #DC143C;
+  text-shadow: 
+    0 0 10px rgba(220, 20, 60, 0.8),
+    0 0 20px rgba(220, 20, 60, 0.6),
+    0 0 30px rgba(220, 20, 60, 0.4),
+    0 1px 0 #8B0000,
+    0 2px 0 #800000,
+    0 3px 0 #700000,
+    0 4px 0 #600000,
+    0 5px 0 #500000,
+    0 6px 1px rgba(0,0,0,.1),
+    0 0 5px rgba(0,0,0,.1),
+    0 1px 3px rgba(0,0,0,.3),
+    0 3px 5px rgba(0,0,0,.2),
+    0 5px 10px rgba(0,0,0,.25),
+    0 10px 10px rgba(0,0,0,.2),
+    0 20px 20px rgba(0,0,0,.15);
+}
+
+.countdown-display--couplet .countdown-title {
+  color: #DC143C;
+  text-shadow: 
+    0 0 10px rgba(220, 20, 60, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.countdown-display--couplet .time-separator {
+  color: #DC143C;
+}
+
+.countdown-display--couplet .time-label {
+  color: #FF6B6B;
+}
+
+/* 生肖皮肤 (Zodiac Skin) */
+.countdown-display--zodiac {
+  /* 生肖风格：紫金主题，装饰性字体 */
+}
+
+.countdown-display--zodiac .time-value {
+  font-family: 'STXinwei', 'FZXinWei-M06S', '华文新魏', 'KaiTi', serif;
+  color: #9370DB;
+  text-shadow: 
+    0 0 10px rgba(147, 112, 219, 0.8),
+    0 0 20px rgba(147, 112, 219, 0.6),
+    0 0 30px rgba(147, 112, 219, 0.4),
+    0 1px 0 #6A5ACD,
+    0 2px 0 #5F4FBD,
+    0 3px 0 #5444AD,
+    0 4px 0 #49399D,
+    0 5px 0 #3E2E8D,
+    0 6px 1px rgba(0,0,0,.1),
+    0 0 5px rgba(0,0,0,.1),
+    0 1px 3px rgba(0,0,0,.3),
+    0 3px 5px rgba(0,0,0,.2),
+    0 5px 10px rgba(0,0,0,.25),
+    0 10px 10px rgba(0,0,0,.2),
+    0 20px 20px rgba(0,0,0,.15);
+}
+
+.countdown-display--zodiac .countdown-title {
+  color: #FFD700;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 0 20px rgba(147, 112, 219, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.countdown-display--zodiac .time-separator {
+  color: #FFD700;
+}
+
+.countdown-display--zodiac .time-label {
+  color: #DDA0DD;
+}
+
+/* 紧急状态下的皮肤特定样式 */
+.countdown-display--lantern .countdown-container.urgent .time-value {
+  color: #FF4444;
+  text-shadow: 
+    0 0 10px rgba(255, 68, 68, 0.8),
+    0 0 20px rgba(255, 68, 68, 0.6),
+    0 0 30px rgba(255, 68, 68, 0.4),
+    0 1px 0 #ccc,
+    0 2px 0 #c9c9c9,
+    0 3px 0 #bbb,
+    0 4px 0 #b9b9b9,
+    0 5px 0 #aaa;
+}
+
+.countdown-display--couplet .countdown-container.urgent .time-value {
+  color: #FF0000;
+  text-shadow: 
+    0 0 10px rgba(255, 0, 0, 0.8),
+    0 0 20px rgba(255, 0, 0, 0.6),
+    0 0 30px rgba(255, 0, 0, 0.4),
+    0 1px 0 #8B0000,
+    0 2px 0 #800000,
+    0 3px 0 #700000;
+}
+
+.countdown-display--zodiac .countdown-container.urgent .time-value {
+  color: #FF1493;
+  text-shadow: 
+    0 0 10px rgba(255, 20, 147, 0.8),
+    0 0 20px rgba(255, 20, 147, 0.6),
+    0 0 30px rgba(255, 20, 147, 0.4),
+    0 1px 0 #C71585,
+    0 2px 0 #B71475,
+    0 3px 0 #A71365;
+}
