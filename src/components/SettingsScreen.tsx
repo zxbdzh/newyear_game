@@ -17,6 +17,7 @@ import {
 } from '../store/audioSlice';
 import { setTheme, setSkin } from '../store/themeSlice';
 import type { AudioController } from '../services/AudioController';
+import { Button } from './Button';
 import './SettingsScreen.css';
 
 interface SettingsScreenProps {
@@ -71,6 +72,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [localSkinId, setLocalSkinId] = useState(currentSkin.id);
   const [localPerformanceLevel, setLocalPerformanceLevel] = useState<'low' | 'medium' | 'high'>('medium');
   const [localManualOffset, setLocalManualOffset] = useState(0);
+  const [offsetError, setOffsetError] = useState('');
 
   // 当设置界面打开时，同步当前配置到本地状态
   useEffect(() => {
@@ -146,12 +148,34 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
   // 处理手动时间校准
   const handleManualOffsetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const offset = parseInt(e.target.value) || 0;
-    setLocalManualOffset(offset);
+    const value = e.target.value;
+    const offset = parseInt(value, 10);
+    
+    // 验证范围：-3600 到 +3600 秒（±1小时）
+    if (!isNaN(offset)) {
+      if (offset >= -3600 && offset <= 3600) {
+        setLocalManualOffset(offset);
+        setOffsetError('');
+      } else {
+        setLocalManualOffset(offset);
+        setOffsetError('偏移值必须在 -3600 到 +3600 秒之间');
+      }
+    } else if (value === '' || value === '-') {
+      // 允许空值或负号（输入中）
+      setLocalManualOffset(0);
+      setOffsetError('');
+    } else {
+      setOffsetError('请输入有效的数字');
+    }
   };
 
   // 保存设置
   const handleSave = () => {
+    // 如果有验证错误，不保存
+    if (offsetError) {
+      return;
+    }
+    
     const settings: SettingsData = {
       musicVolume: localMusicVolume,
       sfxVolume: localSFXVolume,
@@ -269,8 +293,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               <label>背景主题</label>
               <div className="theme-selector">
                 {availableThemes.map((theme) => (
-                  <button
+                  <Button
                     key={theme.id}
+                    variant="ghost"
+                    size="sm"
                     className={`theme-option ${localThemeId === theme.id ? 'selected' : ''}`}
                     onClick={() => handleThemeChange(theme.id)}
                   >
@@ -279,7 +305,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       style={{ backgroundColor: theme.primaryColor }}
                     />
                     <span>{theme.name}</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -289,13 +315,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               <label>倒计时皮肤</label>
               <div className="skin-selector">
                 {availableSkins.map((skin) => (
-                  <button
+                  <Button
                     key={skin.id}
+                    variant="ghost"
+                    size="sm"
                     className={`skin-option ${localSkinId === skin.id ? 'selected' : ''}`}
                     onClick={() => handleSkinChange(skin.id)}
                   >
                     {skin.name}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -308,27 +336,33 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             <div className="setting-item">
               <label>画质配置</label>
               <div className="performance-selector">
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className={`performance-option ${localPerformanceLevel === 'low' ? 'selected' : ''}`}
                   onClick={() => handlePerformanceChange('low')}
                 >
                   低
                   <span className="performance-desc">流畅优先</span>
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className={`performance-option ${localPerformanceLevel === 'medium' ? 'selected' : ''}`}
                   onClick={() => handlePerformanceChange('medium')}
                 >
                   中
                   <span className="performance-desc">平衡模式</span>
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className={`performance-option ${localPerformanceLevel === 'high' ? 'selected' : ''}`}
                   onClick={() => handlePerformanceChange('high')}
                 >
                   高
                   <span className="performance-desc">画质优先</span>
-                </button>
+                </Button>
               </div>
             </div>
           </section>
@@ -345,22 +379,32 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               <input
                 id="manual-offset"
                 type="number"
+                min="-3600"
+                max="3600"
+                step="1"
                 value={localManualOffset}
                 onChange={handleManualOffsetChange}
                 placeholder="0"
-                className="offset-input"
+                className={`offset-input ${offsetError ? 'input-error' : ''}`}
+                aria-invalid={!!offsetError}
+                aria-describedby={offsetError ? 'offset-error' : undefined}
               />
+              {offsetError && (
+                <span id="offset-error" className="error-message" role="alert">
+                  {offsetError}
+                </span>
+              )}
             </div>
           </section>
         </div>
 
         <div className="settings-footer">
-          <button className="cancel-button" onClick={handleCancel}>
+          <Button variant="secondary" onClick={handleCancel}>
             取消
-          </button>
-          <button className="save-button" onClick={handleSave}>
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
             保存
-          </button>
+          </Button>
         </div>
       </div>
     </div>
