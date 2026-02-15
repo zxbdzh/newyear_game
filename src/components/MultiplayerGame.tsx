@@ -56,12 +56,15 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const [leaderboard, setLeaderboard] = useState<PlayerInfo[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const initializingRef = useRef(false);
 
   /**
    * 初始化烟花引擎
    */
   useEffect(() => {
-    if (!canvasRef.current || isInitialized) return;
+    if (!canvasRef.current || isInitialized || initializingRef.current) return;
+    
+    initializingRef.current = true;
 
     try {
       // 创建存储服务

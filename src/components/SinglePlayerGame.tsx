@@ -146,8 +146,8 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
           triggeredAchievementsRef.current.add(achievement.id);
         }
         
-        // 注册成就解锁回调
-        achievementManager.onUnlock((achievement) => {
+        // 注册成就解锁回调（使用ref确保只注册一次）
+        const handleAchievementUnlock = (achievement: Achievement) => {
           // 检查是否已经触发过此成就（使用更严格的检查）
           if (!triggeredAchievementsRef.current.has(achievement.id)) {
             triggeredAchievementsRef.current.add(achievement.id);
@@ -158,7 +158,9 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
               audioController.playExplosionSFX();
             }
           }
-        });
+        };
+        
+        achievementManager.onUnlock(handleAchievementUnlock);
         
         // 创建烟花收藏管理器
         const collectionManager = new FireworkCollectionManager(storageService);
@@ -184,8 +186,8 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
           gamesPlayed: 1 // 当前游戏
         });
         
-        // 更新游戏时长成就
-        if (stats.totalPlayTime && stats.totalPlayTime > 0) {
+        // 更新游戏时长成就（只在首次加载时更新，避免重复触发）
+        if (stats.totalPlayTime && stats.totalPlayTime > 0 && !achievementManager.getAchievement('playtime_300')?.unlocked) {
           achievementManager.updateProgress('playtime', stats.totalPlayTime);
         }
         
