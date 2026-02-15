@@ -15,7 +15,7 @@ interface PlayerNotificationProps {
   playerNickname: string;
   /** 通知时间戳 */
   timestamp: number;
-  /** 显示持续时间（毫秒），默认30秒 */
+  /** 显示持续时间（毫秒），默认1秒 */
   duration?: number;
   /** 通知消失回调 */
   onDismiss?: () => void;
@@ -23,12 +23,12 @@ interface PlayerNotificationProps {
 
 /**
  * 玩家通知组件
- * 显示"[昵称] 燃放了烟花！"消息，持续30秒后自动消失
+ * 显示"[昵称] 燃放了烟花！"消息，持续1秒后自动消失
  */
 export const PlayerNotification: React.FC<PlayerNotificationProps> = ({
   playerNickname,
   timestamp,
-  duration = 30000,
+  duration = 1000,
   onDismiss,
 }) => {
   const [visible, setVisible] = useState(true);

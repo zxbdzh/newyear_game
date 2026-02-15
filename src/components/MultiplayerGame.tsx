@@ -19,12 +19,14 @@ import { CountdownDisplay } from './CountdownDisplay';
 import { PlayerNotification } from './PlayerNotification';
 import { SettingsScreen, type SettingsData } from './SettingsScreen';
 import { FireworksEngine } from '../engines/FireworksEngine';
+import { ComboSystem } from '../engines/ComboSystem';
 import { NetworkSynchronizer } from '../services/NetworkSynchronizer';
 import { StorageService } from '../services/StorageService';
 import { PerformanceOptimizer } from '../services/PerformanceOptimizer';
 import { CountdownEngine } from '../engines/CountdownEngine';
 import { useAppSelector } from '../store/hooks';
 import type { FireworkAction, RoomInfo, PlayerInfo } from '../types/NetworkTypes';
+import type { ComboState } from '../types';
 import './MultiplayerGame.css';
 
 /**
@@ -34,6 +36,9 @@ interface NotificationItem {
   id: string;
   playerNickname: string;
   timestamp: number;
+  message?: string; // 可选的自定义消息
+  isCombo?: boolean; // 是否是连击通知
+  comboCount?: number; // 连击数
 }
 
 /**
@@ -59,6 +64,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<FireworksEngine | null>(null);
   const countdownEngineRef = useRef<CountdownEngine | null>(null);
+  const comboSystemRef = useRef<ComboSystem | null>(null);
   const performanceOptimizerRef = useRef<PerformanceOptimizer | null>(null);
   const storageServiceRef = useRef<StorageService | null>(null);
   const audioControllerRef = useRef<any>(audioController);
@@ -69,6 +75,12 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const [showSettings, setShowSettings] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [countdownReady, setCountdownReady] = useState(false);
+  const [comboState, setComboState] = useState<ComboState>({
+    count: 0,
+    lastClickTime: 0,
+    isActive: false,
+    multiplier: 1,
+  });
   const initializingRef = useRef(false);
   
   // Get current skin from Redux store
@@ -119,6 +131,37 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       // 启动动画循环
       engine.startAnimation();
       
+      // 创建连击系统
+      const comboSystem = new ComboSystem({
+        timeWindow: 3000,
+        minClicks: 2,
+        comboMultipliers: new Map([
+          [2, 2],
+          [4, 3],
+          [6, 5],
+        ]),
+      });
+      
+      // 注册连击回调
+      comboSystem.onCombo((state) => {
+        setComboState(state);
+        
+        // 连击里程碑播报
+        if (state.count === 10 || state.count === 50 || state.count === 100 || state.count === 200) {
+          const notification: NotificationItem = {
+            id: `combo-${Date.now()}`,
+            playerNickname: '你',
+            timestamp: Date.now(),
+            isCombo: true,
+            comboCount: state.count,
+            message: `达成${state.count}连击！`,
+          };
+          setNotifications((prev) => [...prev, notification]);
+        }
+      });
+      
+      comboSystemRef.current = comboSystem;
+      
       setIsInitialized(true);
 
       console.log('[MultiplayerGame] 烟花引擎初始化成功');
@@ -137,6 +180,10 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       if (countdownEngineRef.current) {
         countdownEngineRef.current.destroy();
         countdownEngineRef.current = null;
+      }
+      if (comboSystemRef.current) {
+        comboSystemRef.current.clearCallbacks();
+        comboSystemRef.current = null;
       }
       // 重置初始化标志，允许重新初始化
       initializingRef.current = false;
@@ -166,6 +213,24 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
+      
+      const now = Date.now();
+      
+      // 注册点击到连击系统
+      if (comboSystemRef.current) {
+        const newComboState = comboSystemRef.current.registerClick(now);
+        setComboState(newComboState);
+        
+        // 根据连击状态发射烟花
+        if (newComboState.isActive && newComboState.multiplier >= 2) {
+          engineRef.current.launchComboFireworks(x, y, newComboState.multiplier);
+        } else {
+          engineRef.current.launchFirework(x, y);
+        }
+      } else {
+        // 没有连击系统时，发射普通烟花
+        engineRef.current.launchFirework(x, y);
+      }
 
       // 本地发射烟花
       const fireworkId = engineRef.current.launchFirework(x, y);
@@ -467,6 +532,20 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         </div>
       )}
 
+      {/* 连击显示 */}
+      {comboState.isActive && (
+        <div className={`combo-display ${comboState.count >= 10 ? 'combo-milestone' : ''} ${comboState.count >= 50 ? 'combo-milestone-50' : ''} ${comboState.count >= 100 ? 'combo-milestone-100' : ''}`}>
+          <div className="combo-count">{comboState.count}x</div>
+          <div className="combo-label">
+            {comboState.count >= 200 ? '传说连击!' : 
+             comboState.count >= 100 ? '史诗连击!' : 
+             comboState.count >= 50 ? '超级连击!' : 
+             comboState.count >= 10 ? '完美连击!' : 
+             '连击!'}
+          </div>
+        </div>
+      )}
+
       {/* 玩家通知 */}
       <div className="player-notifications-container">
         {notifications.map((notification) => (
@@ -474,6 +553,9 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
             key={notification.id}
             playerNickname={notification.playerNickname}
             timestamp={notification.timestamp}
+            message={notification.message}
+            isCombo={notification.isCombo}
+            comboCount={notification.comboCount}
             onDismiss={() => {
               setNotifications((prev) => 
                 prev.filter((n) => n.id !== notification.id)
