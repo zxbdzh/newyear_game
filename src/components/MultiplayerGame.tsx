@@ -78,7 +78,15 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
    * 初始化烟花引擎
    */
   useEffect(() => {
-    if (!canvasRef.current || initializingRef.current) return;
+    console.log('[MultiplayerGame] useEffect 运行', {
+      hasCanvas: !!canvasRef.current,
+      isInitializing: initializingRef.current
+    });
+    
+    if (!canvasRef.current || initializingRef.current) {
+      console.log('[MultiplayerGame] 跳过初始化');
+      return;
+    }
     
     initializingRef.current = true;
 
@@ -106,6 +114,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       // 创建烟花引擎
       const engine = new FireworksEngine(canvasRef.current, audioController);
       engineRef.current = engine;
+      console.log('[MultiplayerGame] engineRef.current 已设置:', engineRef.current);
       
       // 启动动画循环
       engine.startAnimation();
@@ -119,7 +128,9 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
     }
 
     return () => {
+      console.log('[MultiplayerGame] 清理函数运行');
       if (engineRef.current) {
+        console.log('[MultiplayerGame] 销毁引擎');
         engineRef.current.destroy();
         engineRef.current = null;
       }
@@ -127,6 +138,10 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         countdownEngineRef.current.destroy();
         countdownEngineRef.current = null;
       }
+      // 重置初始化标志，允许重新初始化
+      initializingRef.current = false;
+      setIsInitialized(false);
+      setCountdownReady(false);
     };
   }, [audioController]); // 移除 isInitialized 依赖
 
@@ -136,6 +151,8 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const handleCanvasClick = useCallback(
     (event: React.MouseEvent<HTMLCanvasElement>) => {
       console.log('[MultiplayerGame] Canvas clicked!', event);
+      console.log('[MultiplayerGame] engineRef.current:', engineRef.current);
+      console.log('[MultiplayerGame] canvasRef.current:', canvasRef.current);
       
       if (!engineRef.current || !canvasRef.current) {
         console.log('[MultiplayerGame] Engine or canvas not ready', {
