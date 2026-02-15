@@ -83,6 +83,10 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       // 创建烟花引擎
       const engine = new FireworksEngine(canvasRef.current, audioController);
       engineRef.current = engine;
+      
+      // 启动动画循环
+      engine.startAnimation();
+      
       setIsInitialized(true);
 
       console.log('[MultiplayerGame] 烟花引擎初始化成功');

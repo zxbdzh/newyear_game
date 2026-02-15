@@ -86,11 +86,6 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
   // 追踪已触发的成就通知（防止重复触发）
   const triggeredAchievementsRef = useRef<Set<string>>(new Set());
   
-  // 清除已触发成就的函数
-  const clearTriggeredAchievements = () => {
-    triggeredAchievementsRef.current.clear();
-  };
-  
   // 管理器引用
   const achievementManagerRef = useRef<AchievementManager | null>(null);
   const collectionManagerRef = useRef<FireworkCollectionManager | null>(null);
@@ -145,6 +140,12 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         await achievementManager.load();
         achievementManagerRef.current = achievementManager;
         
+        // 初始化已触发成就列表（防止重复通知）
+        const unlockedAchievements = achievementManager.getUnlockedAchievements();
+        for (const achievement of unlockedAchievements) {
+          triggeredAchievementsRef.current.add(achievement.id);
+        }
+        
         // 注册成就解锁回调
         achievementManager.onUnlock((achievement) => {
           // 检查是否已经触发过此成就（使用更严格的检查）
@@ -174,7 +175,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         setCollectionItems(collectionManager.getAllItems());
         
         // 加载统计数据
-        const stats = await statisticsTracker.getStatistics();
+        const stats = statisticsTracker.getStatistics();
         setStatistics({
           totalClicks: stats.totalClicks || 0,
           maxCombo: stats.maxCombo || 0,
@@ -548,8 +549,8 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
       multiplier: 1,
     });
     
-    // 清除已触发的成就通知记录
-    clearTriggeredAchievements();
+    // 注意：不清除已触发的成就通知记录，避免重复通知
+    // clearTriggeredAchievements(); // 已移除
     
     // 重置游戏开始时间
     gameStartTimeRef.current = Date.now();
