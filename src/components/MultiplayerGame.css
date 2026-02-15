@@ -1,6 +1,7 @@
 /**
  * 多人游戏样式
  * Feature: new-year-fireworks-game
+ * 与单人模式保持一致的设计风格
  */
 
 .multiplayer-game {
@@ -8,131 +9,11 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: transparent; /* 使用全局主题背景 */
+  background: transparent;
 }
 
-/* 倒计时显示 */
-.multiplayer-countdown {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-}
-
-/* 在线人数和设置按钮容器 */
-.multiplayer-header {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* 在线人数显示 */
-.multiplayer-online-count {
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 16px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 2px solid #ffd700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.settings-button {
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #ffd700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.settings-button:hover {
-  background: rgba(255, 215, 0, 0.2);
-  transform: scale(1.1);
-}
-
-.online-icon {
-  font-size: 20px;
-}
-
-.online-text {
-  white-space: nowrap;
-}
-
-/* 排行榜显示 */
-.multiplayer-leaderboard {
-  position: absolute;
-  top: 80px;
-  right: 20px;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  min-width: 200px;
-  border: 2px solid #ffd700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.leaderboard-title {
-  margin: 0 0 10px 0;
-  font-size: 18px;
-  text-align: center;
-  color: #ffd700;
-}
-
-.leaderboard-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.leaderboard-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.leaderboard-rank {
-  font-weight: bold;
-  color: #ffd700;
-  min-width: 30px;
-}
-
-.leaderboard-nickname {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.leaderboard-count {
-  font-weight: bold;
-  color: #ff6b6b;
-}
-
-/* 烟花画布 */
-.multiplayer-canvas {
+/* 烟花Canvas - 全屏背景 */
+.fireworks-canvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -140,11 +21,193 @@
   height: 100%;
   cursor: crosshair;
   touch-action: none;
+  z-index: 1;
+}
+
+/* 顶部控制栏 */
+.top-control-bar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  pointer-events: none;
+}
+
+/* 控制按钮容器 */
+.control-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  pointer-events: auto;
 }
 
 /* 控制按钮 */
-.multiplayer-controls {
+.control-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  color: #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.control-button:hover {
+  background: rgba(255, 215, 0, 0.2);
+  transform: scale(1.1);
+  border-color: #ffd700;
+}
+
+.control-button svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* 倒计时包装器 */
+.countdown-wrapper {
+  display: flex;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+/* 在线人数徽章 */
+.online-count-badge {
   position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  color: #ffd700;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+}
+
+.online-count-badge svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* 排行榜面板 */
+.leaderboard-panel {
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  width: 280px;
+  max-height: 400px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  overflow: hidden;
+}
+
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.leaderboard-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #ffd700;
+  font-weight: 600;
+}
+
+.close-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 0, 0, 0.15);
+  border: 2px solid rgba(255, 68, 68, 0.5);
+  color: #ff4444;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: rgba(255, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+.leaderboard-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.leaderboard-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.leaderboard-rank {
+  font-weight: 700;
+  color: #ffd700;
+  min-width: 40px;
+  font-size: 16px;
+}
+
+.leaderboard-nickname {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.leaderboard-count {
+  font-weight: 600;
+  color: #ff6b6b;
+  font-size: 14px;
+}
+
+/* 底部按钮 */
+.bottom-buttons {
+  position: fixed;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
@@ -153,92 +216,117 @@
   gap: 15px;
 }
 
-.control-button {
-  padding: 12px 30px;
+.game-button {
+  padding: 14px 32px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
   border: none;
-  border-radius: 25px;
+  border-radius: 28px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.game-button svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+  display: block;
+  flex-shrink: 0;
 }
 
 .exit-button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .exit-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .exit-button:active {
   transform: translateY(0);
 }
 
-/* 移动端适配 */
+/* 响应式设计 */
 @media (max-width: 768px) {
-  .multiplayer-countdown {
-    top: 10px;
-  }
-
-  .multiplayer-header {
-    top: 10px;
-    right: 10px;
-    gap: 8px;
-  }
-
-  .multiplayer-online-count {
-    padding: 8px 15px;
-    font-size: 14px;
-  }
-
-  .online-icon {
-    font-size: 16px;
-  }
-
-  .settings-button {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-  }
-
-  .multiplayer-leaderboard {
-    top: 60px;
-    right: 10px;
-    padding: 12px;
-    min-width: 160px;
-  }
-
-  .leaderboard-title {
-    font-size: 16px;
-  }
-
-  .leaderboard-item {
-    font-size: 12px;
-    padding: 6px;
-  }
-
-  .multiplayer-controls {
-    bottom: 20px;
+  .top-control-bar {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    gap: 12px;
   }
 
   .control-button {
-    padding: 10px 25px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .control-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .online-count-badge {
+    padding: 10px 16px;
     font-size: 14px;
+  }
+
+  .online-count-badge svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .leaderboard-panel {
+    top: 100px;
+    right: 12px;
+    width: calc(100vw - 24px);
+    max-width: 320px;
+  }
+
+  .bottom-buttons {
+    bottom: 20px;
+  }
+
+  .game-button {
+    padding: 12px 28px;
+    font-size: 14px;
+  }
+
+  .game-button svg {
+    width: 16px;
+    height: 16px;
   }
 }
 
 /* 小屏幕优化 */
 @media (max-width: 480px) {
-  .multiplayer-leaderboard {
-    display: none;
+  .control-buttons {
+    gap: 8px;
   }
 
-  .multiplayer-online-count {
+  .control-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .online-count-badge {
+    padding: 8px 12px;
     font-size: 12px;
-    padding: 6px 12px;
+  }
+
+  .leaderboard-panel {
+    width: calc(100vw - 24px);
+  }
+
+  .game-button {
+    padding: 10px 24px;
+    font-size: 13px;
   }
 }

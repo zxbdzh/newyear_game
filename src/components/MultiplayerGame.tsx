@@ -14,16 +14,27 @@
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Users, Settings, Trophy, LogOut } from 'lucide-react';
 import { CountdownDisplay } from './CountdownDisplay';
-import { PlayerNotification, type NotificationItem } from './PlayerNotification';
+import { PlayerNotification } from './PlayerNotification';
 import { SettingsScreen, type SettingsData } from './SettingsScreen';
 import { FireworksEngine } from '../engines/FireworksEngine';
 import { NetworkSynchronizer } from '../services/NetworkSynchronizer';
 import { StorageService } from '../services/StorageService';
 import { PerformanceOptimizer } from '../services/PerformanceOptimizer';
 import { CountdownEngine } from '../engines/CountdownEngine';
+import { useAppSelector } from '../store/hooks';
 import type { FireworkAction, RoomInfo, PlayerInfo } from '../types/NetworkTypes';
 import './MultiplayerGame.css';
+
+/**
+ * 通知项类型
+ */
+interface NotificationItem {
+  id: string;
+  playerNickname: string;
+  timestamp: number;
+}
 
 /**
  * 组件属性
@@ -56,7 +67,11 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const [leaderboard, setLeaderboard] = useState<PlayerInfo[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const initializingRef = useRef(false);
+  
+  // Get current skin from Redux store
+  const currentSkin = useAppSelector((state) => state.theme.currentSkin);
 
   /**
    * 初始化烟花引擎
@@ -344,42 +359,74 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
 
   return (
     <div className="multiplayer-game">
-      {/* 倒计时显示 */}
-      <div className="multiplayer-countdown">
-        {countdownEngineRef.current && (
-          <CountdownDisplay engine={countdownEngineRef.current} />
-        )}
-      </div>
+      {/* 烟花Canvas - 全屏背景 */}
+      <canvas
+        ref={canvasRef}
+        className="fireworks-canvas"
+        onClick={handleCanvasClick}
+        onTouchStart={handleCanvasTouch}
+        aria-label="点击屏幕燃放烟花"
+      />
 
-      {/* 在线人数和设置按钮 */}
-      <div className="multiplayer-header">
-        <div className="multiplayer-online-count">
-          <span className="online-icon">👥</span>
-          <span className="online-text">
-            在线: {roomInfo?.players.length || 0}/{roomInfo?.maxPlayers || 20}
-          </span>
+      {/* 顶部控制栏 */}
+      <div className="top-control-bar">
+        {/* 控制按钮 */}
+        <div className="control-buttons">
+          <button
+            className="control-button"
+            onClick={() => setShowLeaderboard(!showLeaderboard)}
+            aria-label="排行榜"
+            title="排行榜"
+          >
+            <Trophy size={20} />
+          </button>
+          
+          <button
+            className="control-button settings-button"
+            onClick={handleOpenSettings}
+            aria-label="设置"
+            title="设置"
+          >
+            <Settings size={20} />
+          </button>
         </div>
         
-        <button
-          className="control-button settings-button"
-          onClick={handleOpenSettings}
-          aria-label="设置"
-          title="设置"
-        >
-          ⚙️
-        </button>
+        {/* 倒计时显示 */}
+        <div className="countdown-wrapper">
+          {countdownEngineRef.current && (
+            <CountdownDisplay
+              engine={countdownEngineRef.current}
+              skinId={currentSkin.id}
+            />
+          )}
+        </div>
+        
+        {/* 在线人数 */}
+        <div className="online-count-badge">
+          <Users size={18} />
+          <span>{roomInfo?.players.length || 0}/{roomInfo?.maxPlayers || 20}</span>
+        </div>
       </div>
 
-      {/* 排行榜显示 */}
-      {leaderboard.length > 0 && (
-        <div className="multiplayer-leaderboard">
-          <h3 className="leaderboard-title">🏆 排行榜</h3>
+      {/* 排行榜面板 */}
+      {showLeaderboard && leaderboard.length > 0 && (
+        <div className="leaderboard-panel">
+          <div className="leaderboard-header">
+            <h3>排行榜</h3>
+            <button 
+              className="close-button"
+              onClick={() => setShowLeaderboard(false)}
+              aria-label="关闭"
+            >
+              ×
+            </button>
+          </div>
           <div className="leaderboard-list">
             {leaderboard.map((player, index) => (
               <div key={player.id} className="leaderboard-item">
                 <span className="leaderboard-rank">#{index + 1}</span>
                 <span className="leaderboard-nickname">{player.nickname}</span>
-                <span className="leaderboard-count">🎆 {player.fireworkCount}</span>
+                <span className="leaderboard-count">{player.fireworkCount}</span>
               </div>
             ))}
           </div>
@@ -387,20 +434,31 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       )}
 
       {/* 玩家通知 */}
-      <PlayerNotification notifications={notifications} />
+      <div className="player-notifications-container">
+        {notifications.map((notification) => (
+          <PlayerNotification
+            key={notification.id}
+            playerNickname={notification.playerNickname}
+            timestamp={notification.timestamp}
+            onDismiss={() => {
+              setNotifications((prev) => 
+                prev.filter((n) => n.id !== notification.id)
+              );
+            }}
+          />
+        ))}
+      </div>
 
-      {/* 烟花画布 */}
-      <canvas
-        ref={canvasRef}
-        className="multiplayer-canvas"
-        onClick={handleCanvasClick}
-        onTouchStart={handleCanvasTouch}
-      />
-
-      {/* 控制按钮 */}
-      <div className="multiplayer-controls">
-        <button className="control-button exit-button" onClick={handleExit}>
-          退出房间
+      {/* 底部按钮 */}
+      <div className="bottom-buttons">
+        <button
+          className="game-button exit-button"
+          onClick={handleExit}
+          aria-label="退出房间"
+          title="退出房间"
+        >
+          <LogOut size={18} />
+          <span>退出房间</span>
         </button>
       </div>
 
