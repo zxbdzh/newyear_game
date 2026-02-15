@@ -27,8 +27,45 @@ export class ThemeManager {
     root.style.setProperty('--color-secondary', theme.secondaryColor);
     root.style.setProperty('--color-accent', theme.accentColor);
     
-    // 根据主题生成背景渐变
-    const bgGradient = `linear-gradient(135deg, ${theme.primaryColor}15 0%, ${theme.primaryColor}30 50%, ${theme.primaryColor}50 100%)`;
+    // 根据主题ID生成不同的背景渐变，确保主题差异明显
+    let bgGradient: string;
+    
+    switch (theme.id) {
+      case 'theme1':
+        // 主题1: 明亮红色渐变 (传统新年红)
+        bgGradient = `linear-gradient(135deg, 
+          #8B0000 0%, 
+          #DC143C 25%, 
+          #FF0000 50%, 
+          #DC143C 75%, 
+          #8B0000 100%)`;
+        break;
+      
+      case 'theme2':
+        // 主题2: 深红黑渐变 (神秘夜空)
+        bgGradient = `linear-gradient(135deg, 
+          #0a0a0a 0%, 
+          #1a0505 25%, 
+          #2d0a0a 50%, 
+          #1a0505 75%, 
+          #0a0a0a 100%)`;
+        break;
+      
+      case 'theme3':
+        // 主题3: 深蓝紫渐变 (神秘星空) - 与其他主题明显区别
+        bgGradient = `linear-gradient(135deg, 
+          #1a0033 0%, 
+          #2d1b69 25%, 
+          #1e3a8a 50%, 
+          #2d1b69 75%, 
+          #1a0033 100%)`;
+        break;
+      
+      default:
+        // 默认渐变
+        bgGradient = `linear-gradient(135deg, ${theme.primaryColor}15 0%, ${theme.primaryColor}30 50%, ${theme.primaryColor}50 100%)`;
+    }
+    
     root.style.setProperty('--color-bg-primary', bgGradient);
     
     // 如果有背景图片，应用背景
@@ -39,7 +76,7 @@ export class ThemeManager {
       root.style.removeProperty('--bg-image');
     }
     
-    console.log('[ThemeManager] Applied theme:', theme.id);
+    console.log('[ThemeManager] Applied theme:', theme.id, 'with gradient:', bgGradient);
   }
   
   /**
