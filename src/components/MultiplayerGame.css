@@ -37,12 +37,20 @@
   pointer-events: none;
 }
 
+/* 顶部行 - 控制按钮和在线人数 */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  pointer-events: auto;
+}
+
 /* 控制按钮容器 */
 .control-buttons {
   display: flex;
   gap: 12px;
   align-items: center;
-  pointer-events: auto;
 }
 
 /* 控制按钮 */
@@ -85,9 +93,6 @@
 
 /* 在线人数徽章 */
 .online-count-badge {
-  position: absolute;
-  top: 0;
-  right: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -100,7 +105,6 @@
   font-size: 16px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  pointer-events: auto;
 }
 
 .online-count-badge svg {

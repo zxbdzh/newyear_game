@@ -370,25 +370,34 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
 
       {/* 顶部控制栏 */}
       <div className="top-control-bar">
-        {/* 控制按钮 */}
-        <div className="control-buttons">
-          <button
-            className="control-button"
-            onClick={() => setShowLeaderboard(!showLeaderboard)}
-            aria-label="排行榜"
-            title="排行榜"
-          >
-            <Trophy size={20} />
-          </button>
+        {/* 顶部行：控制按钮和在线人数 */}
+        <div className="top-row">
+          {/* 控制按钮 */}
+          <div className="control-buttons">
+            <button
+              className="control-button"
+              onClick={() => setShowLeaderboard(!showLeaderboard)}
+              aria-label="排行榜"
+              title="排行榜"
+            >
+              <Trophy size={20} />
+            </button>
+            
+            <button
+              className="control-button settings-button"
+              onClick={handleOpenSettings}
+              aria-label="设置"
+              title="设置"
+            >
+              <Settings size={20} />
+            </button>
+          </div>
           
-          <button
-            className="control-button settings-button"
-            onClick={handleOpenSettings}
-            aria-label="设置"
-            title="设置"
-          >
-            <Settings size={20} />
-          </button>
+          {/* 在线人数 */}
+          <div className="online-count-badge">
+            <Users size={18} />
+            <span>{roomInfo?.players.length || 0}/{roomInfo?.maxPlayers || 20}</span>
+          </div>
         </div>
         
         {/* 倒计时显示 */}
@@ -399,12 +408,6 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
               skinId={currentSkin.id}
             />
           )}
-        </div>
-        
-        {/* 在线人数 */}
-        <div className="online-count-badge">
-          <Users size={18} />
-          <span>{roomInfo?.players.length || 0}/{roomInfo?.maxPlayers || 20}</span>
         </div>
       </div>
 
