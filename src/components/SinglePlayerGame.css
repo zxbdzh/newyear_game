@@ -63,6 +63,8 @@
 }
 
 /* 确保图标可见 - lucide-react图标样式 */
+.single-player-game .control-button svg,
+.single-player-game .control-button svg path,
 .control-button svg,
 .control-button svg path {
   width: 20px !important;
@@ -80,10 +82,13 @@
   visibility: visible !important;
 }
 
+.single-player-game .control-button svg,
 .control-button svg {
   flex-shrink: 0;
 }
 
+.single-player-game .control-button:hover svg,
+.single-player-game .control-button:hover svg path,
 .control-button:hover svg,
 .control-button:hover svg path {
   color: #E2E8F0 !important;
