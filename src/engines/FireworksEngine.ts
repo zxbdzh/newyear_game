@@ -356,24 +356,33 @@ export class FireworksEngine {
   /**
    * 加速最旧的烟花以腾出空间
    * 通过缩短其剩余持续时间来加速完成
+   * 
+   * 策略：将剩余时间缩短到100ms，让烟花快速进入消失阶段
    */
   private accelerateOldestFirework(): void {
     if (this.fireworks.length === 0) return;
     
-    const oldestFirework = this.fireworks[0];
+    // 找到最旧且还在活跃状态的烟花
+    let oldestActiveFirework: FireworkInstance | null = null;
+    for (const firework of this.fireworks) {
+      if (firework.state !== 'fading' && firework.state !== 'complete') {
+        oldestActiveFirework = firework;
+        break; // 数组已按时间排序，第一个就是最旧的
+      }
+    }
     
-    // 不加速已经在消失或完成阶段的烟花
-    if (oldestFirework.state === 'fading' || oldestFirework.state === 'complete') {
+    if (!oldestActiveFirework) {
+      console.log('[FireworksEngine] No active firework to accelerate');
       return;
     }
     
-    const elapsed = Date.now() - oldestFirework.startTime;
-    const remaining = oldestFirework.type.duration - elapsed;
+    const elapsed = Date.now() - oldestActiveFirework.startTime;
+    const remaining = oldestActiveFirework.type.duration - elapsed;
     
     // 如果还有剩余时间，将其缩短到100ms
     if (remaining > FireworksEngine.ACCELERATION_REMAINING_TIME_MS) {
-      oldestFirework.startTime = Date.now() - (oldestFirework.type.duration - FireworksEngine.ACCELERATION_REMAINING_TIME_MS);
-      console.log(`[FireworksEngine] Accelerated firework ${oldestFirework.id}, remaining: ${remaining}ms -> ${FireworksEngine.ACCELERATION_REMAINING_TIME_MS}ms`);
+      oldestActiveFirework.startTime = Date.now() - (oldestActiveFirework.type.duration - FireworksEngine.ACCELERATION_REMAINING_TIME_MS);
+      console.log(`[FireworksEngine] Accelerated firework ${oldestActiveFirework.id}, remaining: ${remaining}ms -> ${FireworksEngine.ACCELERATION_REMAINING_TIME_MS}ms`);
     }
   }
 

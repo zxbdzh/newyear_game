@@ -216,47 +216,62 @@ export class AchievementManager {
 
   /**
    * 更新成就进度
+   * 
+   * 防重复机制：
+   * 1. 只处理未解锁的成就
+   * 2. 只在进度从未达标跨越到达标时触发解锁
+   * 3. unlockAchievement内部有二次检查
    */
   updateProgress(type: AchievementType, value: number): void {
     for (const achievement of this.achievements.values()) {
-      if (achievement.type === type && !achievement.unlocked) {
-        const oldProgress = achievement.progress;
-        
-        // 更新进度（只增不减）
-        achievement.progress = Math.max(achievement.progress, value);
-        
-        // 防止重复解锁：只有进度从未达标跨越到达标时才触发解锁
-        // Prevent duplicate unlocks: only trigger when progress crosses threshold from below to at/above target
-        if (oldProgress < achievement.target && achievement.progress >= achievement.target) {
-          this.unlockAchievement(achievement.id);
-        }
+      // 跳过已解锁的成就
+      if (achievement.type !== type || achievement.unlocked) {
+        continue;
+      }
+      
+      const oldProgress = achievement.progress;
+      
+      // 更新进度（只增不减）
+      achievement.progress = Math.max(achievement.progress, value);
+      
+      // 防止重复解锁：只有进度从未达标跨越到达标时才触发解锁
+      // 关键检查：oldProgress < target && newProgress >= target
+      if (oldProgress < achievement.target && achievement.progress >= achievement.target) {
+        console.log(`[AchievementManager] Progress crossed threshold for ${achievement.id}: ${oldProgress} -> ${achievement.progress} (target: ${achievement.target})`);
+        this.unlockAchievement(achievement.id);
       }
     }
   }
 
   /**
    * 解锁成就
+   * 
+   * 防重复机制的最后一道防线：
+   * - 严格检查unlocked标志
+   * - 记录详细日志便于调试
+   * - 只在真正解锁时触发回调和保存
    */
   unlockAchievement(id: string): void {
     const achievement = this.achievements.get(id);
     if (!achievement) {
-      console.warn(`Achievement ${id} not found`);
+      console.warn(`[AchievementManager] Achievement ${id} not found`);
       return;
     }
     
-    // 严格检查是否已解锁
+    // 严格检查是否已解锁 - 防重复的关键
     if (achievement.unlocked) {
-      console.log(`Achievement ${id} already unlocked, skipping`);
+      console.log(`[AchievementManager] Achievement ${id} already unlocked, skipping notification`);
       return;
     }
 
+    // 标记为已解锁
     achievement.unlocked = true;
     achievement.unlockedAt = Date.now();
     achievement.progress = achievement.target;
 
-    console.log(`[AchievementManager] Unlocked achievement: ${achievement.name}`);
+    console.log(`[AchievementManager] ✅ Unlocked achievement: ${achievement.name} (${id})`);
 
-    // 触发回调
+    // 触发回调（只在首次解锁时）
     this.triggerUnlockCallbacks(achievement);
 
     // 保存
