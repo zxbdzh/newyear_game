@@ -74,6 +74,32 @@ export class RoomManager {
   }
 
   /**
+   * 创建指定房间码的私人房间
+   * @param code 4位数字房间码
+   * @returns 创建的房间数据
+   */
+  createRoomWithCode(code: string): RoomData {
+    const room: RoomData = {
+      id: this.generateRoomId(),
+      type: 'private',
+      code,
+      players: new Map(),
+      maxPlayers: this.MAX_PLAYERS,
+      createdAt: Date.now(),
+      lastActivityAt: Date.now(),
+    };
+
+    this.rooms.set(room.id, room);
+    this.roomCodeToId.set(code, room.id);
+
+    console.log(
+      `[房间管理] 创建私人房间: ${room.id} (房间码: ${room.code})`
+    );
+
+    return room;
+  }
+
+  /**
    * 通过房间码查找房间
    * @param code 4位数字房间码
    * @returns 房间数据或null

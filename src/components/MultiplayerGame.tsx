@@ -81,6 +81,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
     isActive: false,
     multiplier: 1,
   });
+  const [hasActiveComboNotification, setHasActiveComboNotification] = useState(false);
   const initializingRef = useRef(false);
   
   // Get current skin from Redux store
@@ -148,6 +149,15 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         
         // 连击里程碑播报
         if (state.count === 10 || state.count === 50 || state.count === 100 || state.count === 200) {
+          // 发送连击播报到服务器
+          networkSynchronizer.sendComboMilestone(state.count);
+          
+          // 清除所有现有播报
+          setNotifications([]);
+          
+          // 标记有活跃的连击播报
+          setHasActiveComboNotification(true);
+          
           const notification: NotificationItem = {
             id: `combo-${Date.now()}`,
             playerNickname: '你',
@@ -156,7 +166,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
             comboCount: state.count,
             message: `达成${state.count}连击！`,
           };
-          setNotifications((prev) => [...prev, notification]);
+          setNotifications([notification]);
         }
       });
       
@@ -292,6 +302,12 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       console.error('[MultiplayerGame] 回放烟花失败:', error);
     }
 
+    // 如果有活跃的连击播报，不添加新的普通播报
+    if (hasActiveComboNotification) {
+      console.log('[MultiplayerGame] 连击播报活跃中，跳过普通播报');
+      return;
+    }
+
     // 添加玩家通知
     const notification: NotificationItem = {
       id: `${action.playerId}-${action.timestamp}`,
@@ -300,7 +316,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
     };
 
     setNotifications((prev) => [...prev, notification]);
-  }, []);
+  }, [hasActiveComboNotification]);
 
   /**
    * 设置网络同步器回调
@@ -321,6 +337,27 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       setLeaderboard(leaderboard);
     });
 
+    // 注册连击里程碑回调
+    const unsubscribeCombo = networkSynchronizer.onComboMilestone((data) => {
+      console.log('[MultiplayerGame] 收到连击播报:', data);
+      
+      // 清除所有现有播报
+      setNotifications([]);
+      
+      // 标记有活跃的连击播报
+      setHasActiveComboNotification(true);
+      
+      const notification: NotificationItem = {
+        id: `combo-${data.playerId}-${data.timestamp}`,
+        playerNickname: data.playerNickname,
+        timestamp: data.timestamp,
+        isCombo: true,
+        comboCount: data.comboCount,
+        message: `达成${data.comboCount}连击！`,
+      };
+      setNotifications([notification]);
+    });
+
     // 获取初始房间信息
     const initialRoom = networkSynchronizer.getRoomInfo();
     if (initialRoom) {
@@ -332,6 +369,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       unsubscribeFirework();
       unsubscribeRoom();
       unsubscribeLeaderboard();
+      unsubscribeCombo();
     };
   }, [networkSynchronizer, handleFireworkAction]);
 
@@ -560,6 +598,10 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
               setNotifications((prev) => 
                 prev.filter((n) => n.id !== notification.id)
               );
+              // 如果是连击通知消失，重置标志以允许新的普通播报
+              if (notification.isCombo) {
+                setHasActiveComboNotification(false);
+              }
             }}
           />
         ))}

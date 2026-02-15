@@ -19,6 +19,7 @@
 - ✅ 玩家会话管理
 - ✅ 烟花动作实时同步
 - ✅ 聊天消息广播
+- ✅ 连击里程碑播报（10, 50, 100, 200连击）
 - 🚧 排行榜计算（待实现）
 
 ## 技术栈
@@ -131,7 +132,9 @@ cp .env.example .env
   {
     nickname: string;        // 玩家昵称（1-8字符）
     roomType: 'public' | 'private';
-    code?: string;          // 私人房间码（加入现有房间时提供）
+    code?: string;          // 私人房间码（可选）
+                            // - 提供房间码：加入或自动创建指定房间码的房间
+                            // - 不提供房间码：创建新的随机房间码房间
   }
   ```
 
@@ -150,6 +153,13 @@ cp .env.example .env
   ```typescript
   {
     message: string;        // 消息内容
+  }
+  ```
+
+- `combo_milestone` - 连击里程碑播报
+  ```typescript
+  {
+    comboCount: number;     // 连击数（10, 50, 100, 200等）
   }
   ```
 
@@ -239,6 +249,16 @@ cp .env.example .env
   }
   ```
 
+- `combo_broadcast` - 连击里程碑广播
+  ```typescript
+  {
+    playerId: string;
+    playerNickname: string;
+    comboCount: number;     // 连击数
+    timestamp: number;
+  }
+  ```
+
 ## 架构设计
 
 ### 房间管理系统
@@ -260,6 +280,8 @@ interface RoomData {
 **功能特性：**
 - 公共房间自动匹配（查找可用房间或创建新房间）
 - 私人房间通过4位数字房间码（1000-9999）
+  - 提供房间码：自动加入或创建指定房间码的房间（如果不存在）
+  - 不提供房间码：创建新的随机房间码房间
 - 房间容量限制（最多20人）
 - 空房间自动清理（30分钟无活动，每5分钟检查一次）
 
@@ -322,6 +344,7 @@ interface PlayerInfo {
 - [x] 玩家会话管理
 - [x] 烟花动作实时同步
 - [x] 聊天消息广播
+- [x] 连击里程碑播报系统
 
 ### 待实现 🚧
 

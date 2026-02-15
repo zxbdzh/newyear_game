@@ -77,6 +77,7 @@ export class NetworkSynchronizer {
   private playerLeaveCallbacks = new Set<(playerId: string) => void>();
   private roomUpdateCallbacks = new Set<(room: RoomInfo) => void>();
   private chatMessageCallbacks = new Set<(message: { playerId: string; playerNickname: string; message: string; timestamp: number }) => void>();
+  private comboMilestoneCallbacks = new Set<(data: { playerId: string; playerNickname: string; comboCount: number; timestamp: number }) => void>();
   private leaderboardUpdateCallbacks = new Set<(leaderboard: PlayerInfo[]) => void>();
   private connectionStateCallbacks = new Set<(state: ConnectionState) => void>();
   private latencyUpdateCallbacks = new Set<(latency: LatencyInfo) => void>();
@@ -282,6 +283,15 @@ export class NetworkSynchronizer {
   }
 
   /**
+   * 发送连击里程碑播报
+   */
+  sendComboMilestone(comboCount: number): void {
+    if (this.connectionState === 'connected' && this.socket) {
+      this.socket.emit('combo_milestone', { comboCount });
+    }
+  }
+
+  /**
    * 注册烟花动作回调
    */
   onFireworkAction(callback: (action: FireworkAction) => void): () => void {
@@ -319,6 +329,14 @@ export class NetworkSynchronizer {
   onChatMessage(callback: (message: { playerId: string; playerNickname: string; message: string; timestamp: number }) => void): () => void {
     this.chatMessageCallbacks.add(callback);
     return () => this.chatMessageCallbacks.delete(callback);
+  }
+
+  /**
+   * 注册连击里程碑回调
+   */
+  onComboMilestone(callback: (data: { playerId: string; playerNickname: string; comboCount: number; timestamp: number }) => void): () => void {
+    this.comboMilestoneCallbacks.add(callback);
+    return () => this.comboMilestoneCallbacks.delete(callback);
   }
 
   /**
@@ -435,6 +453,11 @@ export class NetworkSynchronizer {
     // 聊天消息广播
     this.socket.on('chat_broadcast', (data: { playerId: string; playerNickname: string; message: string; timestamp: number }) => {
       this.chatMessageCallbacks.forEach(callback => callback(data));
+    });
+
+    // 连击里程碑广播
+    this.socket.on('combo_broadcast', (data: { playerId: string; playerNickname: string; comboCount: number; timestamp: number }) => {
+      this.comboMilestoneCallbacks.forEach(callback => callback(data));
     });
 
     // 排行榜更新

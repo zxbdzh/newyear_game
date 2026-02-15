@@ -19,6 +19,12 @@ interface PlayerNotificationProps {
   duration?: number;
   /** 通知消失回调 */
   onDismiss?: () => void;
+  /** 自定义消息 */
+  message?: string;
+  /** 是否是连击通知 */
+  isCombo?: boolean;
+  /** 连击数 */
+  comboCount?: number;
 }
 
 /**
@@ -30,6 +36,9 @@ export const PlayerNotification: React.FC<PlayerNotificationProps> = ({
   timestamp,
   duration = 1000,
   onDismiss,
+  message,
+  isCombo = false,
+  comboCount,
 }) => {
   const [visible, setVisible] = useState(true);
 
@@ -48,12 +57,19 @@ export const PlayerNotification: React.FC<PlayerNotificationProps> = ({
   if (!visible) {
     return null;
   }
+  
+  // 连击通知使用特殊样式
+  const notificationClass = isCombo ? 'player-notification combo-notification' : 'player-notification';
+  const displayMessage = message || `[${playerNickname}] 燃放了烟花！`;
 
   return (
-    <div className="player-notification" data-testid="player-notification">
+    <div className={notificationClass} data-testid="player-notification">
       <span className="player-notification-text">
-        [{playerNickname}] 燃放了烟花！
+        {displayMessage}
       </span>
+      {isCombo && comboCount && (
+        <span className="combo-badge">{comboCount}连击</span>
+      )}
     </div>
   );
 };

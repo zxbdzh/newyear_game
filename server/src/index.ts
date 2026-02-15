@@ -140,18 +140,15 @@ io.on('connection', (socket: Socket) => {
         } else if (roomType === 'private') {
           // 私人房间：通过房间码查找或创建新房间
           if (code) {
-            // 加入现有私人房间
+            // 查找现有私人房间，如果不存在则自动创建
             room = roomManager.findRoomByCode(code);
             if (!room) {
-              sessionManager.deleteSession(socket.id);
-              socket.emit('join_room_error', {
-                error: 'room_not_found',
-                message: '房间不存在，请检查房间码',
-              });
-              return;
+              // 自动创建指定房间码的私人房间
+              room = roomManager.createRoomWithCode(code);
+              console.log(`[房间] 自动创建私人房间，房间码: ${code}`);
             }
           } else {
-            // 创建新私人房间
+            // 创建新私人房间（随机房间码）
             room = roomManager.createRoom('private');
           }
         } else {
@@ -375,6 +372,26 @@ io.on('connection', (socket: Socket) => {
     });
 
     console.log(`[聊天] ${session?.nickname || client.nickname} (${socket.id}): ${data.message}`);
+  });
+
+  // 处理连击播报
+  socket.on('combo_milestone', (data: { comboCount: number }) => {
+    const client = connectedClients.get(socket.id);
+    const session = sessionManager.getSession(socket.id);
+    
+    if (!client || !client.roomId) {
+      return;
+    }
+
+    // 广播连击播报到房间内所有玩家
+    io.to(client.roomId).emit('combo_broadcast', {
+      playerId: socket.id,
+      playerNickname: session?.nickname || client.nickname || 'Unknown',
+      comboCount: data.comboCount,
+      timestamp: Date.now(),
+    });
+
+    console.log(`[连击] ${session?.nickname || client.nickname} (${socket.id}) 达成 ${data.comboCount} 连击`);
   });
 
   // 处理断开连接
