@@ -270,20 +270,40 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
 
       // 保存到本地存储
       if (storageServiceRef.current) {
-        const data = await storageServiceRef.current.load();
-        if (data) {
+        try {
+          let data = await storageServiceRef.current.load();
+          
+          // 如果没有数据，使用默认值
+          if (!data) {
+            const { getDefaultSettings } = await import('../utils/defaultSettings');
+            data = getDefaultSettings();
+          }
+          
+          // 更新所有设置字段
           data.themeId = settings.themeId;
           data.skinId = settings.skinId;
+          data.audioConfig = {
+            musicVolume: settings.musicVolume,
+            sfxVolume: settings.sfxVolume,
+            musicMuted: settings.musicMuted,
+            sfxMuted: settings.sfxMuted,
+          };
           data.performanceProfile = {
             level: settings.performanceLevel,
-            maxParticles: 100,
+            maxParticles: settings.performanceLevel === 'low' ? 50 : settings.performanceLevel === 'high' ? 150 : 100,
             maxFireworks: 5,
             useWebGL: false,
             particleSize: 3,
-            enableGlow: true,
-            enableTrails: false,
+            enableGlow: settings.performanceLevel !== 'low',
+            enableTrails: settings.performanceLevel === 'high',
           };
+          data.manualOffset = settings.manualOffset;
+          data.lastPlayedAt = Date.now();
+          
           await storageServiceRef.current.save(data);
+          console.log('[MultiplayerGame] 设置已保存');
+        } catch (saveError) {
+          console.error('[MultiplayerGame] 保存设置失败:', saveError);
         }
       }
     } catch (error) {

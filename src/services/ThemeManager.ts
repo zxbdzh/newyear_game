@@ -27,6 +27,10 @@ export class ThemeManager {
     root.style.setProperty('--color-secondary', theme.secondaryColor);
     root.style.setProperty('--color-accent', theme.accentColor);
     
+    // 根据主题生成背景渐变
+    const bgGradient = `linear-gradient(135deg, ${theme.primaryColor}15 0%, ${theme.primaryColor}30 50%, ${theme.primaryColor}50 100%)`;
+    root.style.setProperty('--color-bg-primary', bgGradient);
+    
     // 如果有背景图片，应用背景
     if (theme.backgroundImage) {
       root.style.setProperty('--bg-image', `url(${theme.backgroundImage})`);

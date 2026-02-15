@@ -1,21 +1,31 @@
 /**
- * 设置界面样式
- * Feature: new-year-fireworks-game
+ * 设置界面样式 - 现代化设计
+ * Feature: settings-ui-modernization
+ * 
+ * 采用现代设计原则：
+ * - 玻璃态设计 (Glassmorphism)
+ * - 流畅动画和微交互
+ * - 清晰的视觉层次
+ * - 优秀的可访问性
  */
 
-/* 遮罩层 */
+/* ========================================
+   遮罩层 - 模糊背景
+   ======================================== */
 .settings-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
+  z-index: var(--z-index-modal-backdrop);
+  animation: fadeIn var(--duration-normal) var(--ease-out);
 }
 
 @keyframes fadeIn {
@@ -27,99 +37,167 @@
   }
 }
 
-/* 模态对话框 */
+/* ========================================
+   模态对话框 - 玻璃态设计
+   ======================================== */
 .settings-modal {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  background: rgba(26, 26, 46, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--spacing-3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   width: 90%;
-  max-width: 600px;
+  max-width: 640px;
   max-height: 85vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: slideUp 0.3s ease-out;
-  border: 2px solid rgba(255, 215, 0, 0.3);
+  animation: slideUp var(--duration-normal) var(--ease-out);
+  border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(50px);
+    transform: translateY(40px) scale(0.95);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 
-/* 头部 */
+/* ========================================
+   头部 - 渐变背景
+   ======================================== */
 .settings-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 30px;
-  background: linear-gradient(90deg, #d32f2f 0%, #c62828 100%);
-  border-bottom: 2px solid rgba(255, 215, 0, 0.5);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: linear-gradient(135deg, 
+    var(--color-primary) 0%, 
+    var(--color-primary-dark) 100%);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 头部装饰光效 */
+.settings-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .settings-header h2 {
   margin: 0;
-  color: #ffd700;
-  font-size: 24px;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  color: var(--color-secondary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-heading);
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .close-button {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--btn-radius-sm);
+  color: var(--color-neutral-100);
+  font-size: var(--font-size-2xl);
   cursor: pointer;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s, color 0.2s;
+  transition: all var(--duration-fast) var(--ease-out);
+  position: relative;
+  z-index: 1;
 }
 
 .close-button:hover {
-  transform: scale(1.2);
-  color: #ffd700;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+  transform: rotate(90deg) scale(1.1);
 }
 
-/* 内容区域 */
+.close-button:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* ========================================
+   内容区域 - 自定义滚动条
+   ======================================== */
 .settings-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 30px;
+  padding: var(--spacing-4);
 }
 
-/* 自定义滚动条 */
+/* 现代化滚动条 */
 .settings-content::-webkit-scrollbar {
   width: 8px;
 }
 
 .settings-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
+  margin: 4px 0;
 }
 
 .settings-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 215, 0, 0.5);
+  background: linear-gradient(180deg, 
+    var(--color-secondary) 0%, 
+    var(--color-secondary-dark) 100%);
   border-radius: 4px;
+  transition: background var(--duration-fast);
 }
 
 .settings-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 215, 0, 0.7);
+  background: var(--color-secondary);
 }
 
-/* 设置分组 */
+/* ========================================
+   设置分组 - 卡片式设计
+   ======================================== */
 .settings-section {
-  margin-bottom: 30px;
+  margin-bottom: var(--spacing-4);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.settings-section:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 215, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .settings-section:last-child {
@@ -127,16 +205,33 @@
 }
 
 .settings-section h3 {
-  color: #ffd700;
-  font-size: 18px;
-  margin: 0 0 15px 0;
-  padding-bottom: 8px;
-  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+  color: var(--color-secondary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family-heading);
+  margin: 0 0 var(--spacing-3) 0;
+  padding-bottom: var(--spacing-2);
+  border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
 }
 
-/* 设置项 */
+.settings-section h3::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, 
+    var(--color-secondary) 0%, 
+    var(--color-secondary-dark) 100%);
+  border-radius: 2px;
+}
+
+/* ========================================
+   设置项 - 间距优化
+   ======================================== */
 .setting-item {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-3);
 }
 
 .setting-item:last-child {
@@ -147,287 +242,465 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #fff;
-  font-size: 14px;
-  margin-bottom: 8px;
-  font-weight: 500;
+  color: var(--color-neutral-100);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-2);
+  font-weight: var(--font-weight-medium);
 }
 
 .volume-value {
-  color: #ffd700;
-  font-weight: bold;
+  color: var(--color-secondary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  min-width: 48px;
+  text-align: right;
 }
 
-/* 音量控制 */
+/* ========================================
+   音量控制 - 现代化滑块
+   ======================================== */
 .volume-control {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--spacing-2);
 }
 
 .volume-control input[type="range"] {
   flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.2);
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
   outline: none;
   -webkit-appearance: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 滑块轨道填充效果 */
+.volume-control input[type="range"]::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    var(--color-secondary) 0%, 
+    var(--color-secondary-light) 100%);
+  border-radius: 4px;
 }
 
 .volume-control input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: #ffd700;
+  background: var(--color-secondary);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 4px rgba(255, 215, 0, 0.2);
+  transition: all var(--duration-fast) var(--ease-out);
+  position: relative;
+  z-index: 1;
 }
 
 .volume-control input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 0 0 6px rgba(255, 215, 0, 0.3),
+    0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.1);
 }
 
 .volume-control input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: #ffd700;
+  background: var(--color-secondary);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 4px rgba(255, 215, 0, 0.2);
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
 .volume-control input[type="range"]::-moz-range-thumb:hover {
   transform: scale(1.2);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 0 0 6px rgba(255, 215, 0, 0.3);
 }
 
 .volume-control input[type="range"]:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
+.volume-control input[type="range"]:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+}
+
+/* 静音按钮 - 玻璃态设计 */
 .mute-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--btn-radius-sm);
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 20px;
-  transition: all 0.2s;
+  font-size: var(--font-size-xl);
+  transition: all var(--duration-fast) var(--ease-out);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .mute-button:hover {
-  background: rgba(255, 215, 0, 0.2);
-  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.15);
+  border-color: var(--color-secondary);
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+}
+
+.mute-button:active {
+  transform: scale(0.95);
 }
 
 .mute-button.muted {
-  background: rgba(211, 47, 47, 0.3);
-  border-color: #d32f2f;
+  background: rgba(211, 47, 47, 0.2);
+  border-color: var(--color-error);
 }
 
-/* 主题选择器 */
+.mute-button.muted:hover {
+  background: rgba(211, 47, 47, 0.3);
+  border-color: var(--color-error);
+}
+
+/* ========================================
+   主题选择器 - 卡片网格
+   ======================================== */
 .theme-selector {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--spacing-2);
 }
 
 .theme-option {
-  flex: 1;
-  min-width: 150px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-2);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--duration-fast) var(--ease-out);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-2);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    transparent 100%);
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+}
+
+.theme-option:hover::before {
+  opacity: 1;
 }
 
 .theme-option:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 215, 0, 0.5);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 215, 0, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .theme-option.selected {
-  background: rgba(255, 215, 0, 0.2);
-  border-color: #ffd700;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  background: rgba(255, 215, 0, 0.15);
+  border-color: var(--color-secondary);
+  box-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.theme-option.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: var(--color-secondary);
+  color: var(--color-neutral-900);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .theme-preview {
   width: 100%;
-  height: 60px;
-  border-radius: 8px;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  height: 80px;
+  border-radius: var(--spacing-1);
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-preview::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.1) 100%);
 }
 
 .theme-option span {
-  color: #fff;
-  font-size: 14px;
+  color: var(--color-neutral-100);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
-/* 皮肤选择器 */
+/* ========================================
+   皮肤选择器 - 按钮组
+   ======================================== */
 .skin-selector {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-2);
 }
 
 .skin-option {
-  flex: 1;
-  min-width: 120px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
   cursor: pointer;
-  transition: all 0.2s;
-  color: #fff;
-  font-size: 14px;
+  transition: all var(--duration-fast) var(--ease-out);
+  color: var(--color-neutral-100);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.skin-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    transparent 100%);
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+}
+
+.skin-option:hover::before {
+  opacity: 1;
 }
 
 .skin-option:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 215, 0, 0.4);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .skin-option.selected {
-  background: rgba(255, 215, 0, 0.2);
-  border-color: #ffd700;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  background: rgba(255, 215, 0, 0.15);
+  border-color: var(--color-secondary);
+  box-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: var(--color-secondary);
 }
 
-/* 性能选择器 */
+/* ========================================
+   性能选择器 - 三列布局
+   ======================================== */
 .performance-selector {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-2);
 }
 
 .performance-option {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-2);
   cursor: pointer;
-  transition: all 0.2s;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
+  transition: all var(--duration-fast) var(--ease-out);
+  color: var(--color-neutral-100);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-1);
+  position: relative;
+  overflow: hidden;
+}
+
+.performance-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    transparent 100%);
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+}
+
+.performance-option:hover::before {
+  opacity: 1;
 }
 
 .performance-option:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 215, 0, 0.4);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .performance-option.selected {
-  background: rgba(255, 215, 0, 0.2);
-  border-color: #ffd700;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  background: rgba(255, 215, 0, 0.15);
+  border-color: var(--color-secondary);
+  box-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: var(--color-secondary);
 }
 
 .performance-desc {
-  font-size: 12px;
-  font-weight: normal;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  color: rgba(255, 255, 255, 0.6);
 }
 
-/* 偏移输入 */
+/* ========================================
+   偏移输入 - 现代化输入框
+   ======================================== */
 .offset-hint {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: normal;
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: var(--font-weight-normal);
 }
 
 .offset-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 10px 12px;
-  color: #fff;
-  font-size: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-3);
+  color: var(--color-neutral-100);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   outline: none;
-  transition: all 0.2s;
+  transition: all var(--duration-fast) var(--ease-out);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .offset-input:focus {
-  border-color: #ffd700;
-  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--color-secondary);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 0 0 4px rgba(255, 215, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .offset-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.3);
 }
 
-/* 底部按钮 */
+.offset-input.input-error {
+  border-color: var(--color-error);
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.offset-input.input-error:focus {
+  border-color: var(--color-error);
+  box-shadow: 
+    0 0 0 4px rgba(244, 67, 54, 0.2),
+    0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+.error-message {
+  display: block;
+  color: #ff6b6b;
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-1);
+  padding: var(--spacing-2) var(--spacing-2);
+  background: rgba(244, 67, 54, 0.15);
+  border-left: 3px solid var(--color-error);
+  border-radius: var(--spacing-1);
+  animation: slideIn var(--duration-fast) var(--ease-out);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   底部按钮 - 现代化按钮
+   ======================================== */
 .settings-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 20px 30px;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
   background: rgba(0, 0, 0, 0.3);
-  border-top: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-.cancel-button,
-.save-button {
-  padding: 12px 30px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.cancel-button {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.cancel-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-.save-button {
-  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
-  color: #ffd700;
-  border: 2px solid #ffd700;
-  box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
-}
-
-.save-button:hover {
-  background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(211, 47, 47, 0.4);
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* 响应式设计 */
@@ -438,46 +711,42 @@
   }
 
   .settings-header {
-    padding: 15px 20px;
+    padding: var(--spacing-2) var(--spacing-3);
   }
 
   .settings-header h2 {
-    font-size: 20px;
+    font-size: var(--font-size-xl);
   }
 
   .settings-content {
-    padding: 15px 20px;
+    padding: var(--spacing-3);
   }
 
   .settings-footer {
-    padding: 15px 20px;
+    padding: var(--spacing-2) var(--spacing-3);
   }
 
-  .theme-option {
-    min-width: 100%;
+  .theme-selector {
+    grid-template-columns: 1fr;
   }
 
   .performance-selector {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
   .settings-header h2 {
-    font-size: 18px;
+    font-size: var(--font-size-lg);
   }
 
   .close-button {
-    font-size: 28px;
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-xl);
   }
 
   .settings-section h3 {
-    font-size: 16px;
-  }
-
-  .cancel-button,
-  .save-button {
-    padding: 10px 20px;
-    font-size: 14px;
+    font-size: var(--font-size-base);
   }
 }

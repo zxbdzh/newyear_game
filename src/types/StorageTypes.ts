@@ -21,6 +21,8 @@ export interface LocalStorageData {
   skinId: string;
   /** 性能配置 */
   performanceProfile: PerformanceProfile;
+  /** 手动时间偏移（秒） */
+  manualOffset: number;
   /** 最后游玩时间 */
   lastPlayedAt: number;
 }

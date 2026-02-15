@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { Button } from './Button';
 import type { GameMode } from '../types/GameTypes';
 import './ModeSelection.css';
 
@@ -134,13 +135,14 @@ export function ModeSelection({
       </div>
 
       {/* 静音按钮 */}
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         className={`mute-button ${isMuted ? 'muted' : ''}`}
         onClick={onToggleMute}
-        aria-label={isMuted ? '取消静音' : '静音'}
-      >
-        <span className="mute-icon">
-          {isMuted ? (
+        ariaLabel={isMuted ? '取消静音' : '静音'}
+        icon={
+          isMuted ? (
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10 4L6 8H2v4h4l4 4V4zm6 2l-2 2 2 2-2 2 2 2 2-2-2-2 2-2-2-2z"/>
             </svg>
@@ -148,10 +150,11 @@ export function ModeSelection({
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10 4L6 8H2v4h4l4 4V4zm4 6c0-1.5-1-3-2-3.5v7c1-.5 2-2 2-3.5zm2 0c0-2.5-1.5-4.5-3.5-5.5v11c2-.5 3.5-3 3.5-5.5z"/>
             </svg>
-          )}
-        </span>
-        <span className="mute-text">{isMuted ? '已静音' : '音乐开启'}</span>
-      </button>
+          )
+        }
+      >
+        {isMuted ? '已静音' : '音乐开启'}
+      </Button>
     </div>
   );
 }

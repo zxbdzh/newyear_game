@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { CountdownDisplay } from './CountdownDisplay';
 import { SettingsScreen, type SettingsData } from './SettingsScreen';
+import { Button } from './Button';
 import { CountdownEngine } from '../engines/CountdownEngine';
 import { FireworksEngine } from '../engines/FireworksEngine';
 import { ComboSystem } from '../engines/ComboSystem';
@@ -319,22 +320,40 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
 
       // 保存到本地存储
       if (storageServiceRef.current) {
-        const data = await storageServiceRef.current.load();
-        if (data) {
-          // 更新主题和皮肤ID
+        try {
+          let data = await storageServiceRef.current.load();
+          
+          // 如果没有数据，使用默认值
+          if (!data) {
+            const { getDefaultSettings } = await import('../utils/defaultSettings');
+            data = getDefaultSettings();
+          }
+          
+          // 更新所有设置字段
           data.themeId = settings.themeId;
           data.skinId = settings.skinId;
+          data.audioConfig = {
+            musicVolume: settings.musicVolume,
+            sfxVolume: settings.sfxVolume,
+            musicMuted: settings.musicMuted,
+            sfxMuted: settings.sfxMuted,
+          };
           data.performanceProfile = {
             level: settings.performanceLevel,
-            maxParticles: 100,
+            maxParticles: settings.performanceLevel === 'low' ? 50 : settings.performanceLevel === 'high' ? 150 : 100,
             maxFireworks: 5,
             useWebGL: false,
             particleSize: 3,
-            enableGlow: true,
-            enableTrails: false,
+            enableGlow: settings.performanceLevel !== 'low',
+            enableTrails: settings.performanceLevel === 'high',
           };
+          data.manualOffset = settings.manualOffset;
+          data.lastPlayedAt = Date.now();
+          
           await storageServiceRef.current.save(data);
           console.log('[SinglePlayerGame] 设置已保存');
+        } catch (saveError) {
+          console.error('[SinglePlayerGame] 保存设置失败:', saveError);
         }
       }
     } catch (error) {
@@ -416,14 +435,14 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
 
         {/* 控制按钮 */}
         <div className="control-buttons">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             className="control-button-with-label mute-button"
             onClick={handleToggleMute}
-            aria-label={audioConfig.musicMuted ? '取消静音' : '静音'}
-            title={audioConfig.musicMuted ? '取消静音' : '静音'}
-          >
-            <span className="button-icon">
-              {audioConfig.musicMuted ? (
+            ariaLabel={audioConfig.musicMuted ? '取消静音' : '静音'}
+            icon={
+              audioConfig.musicMuted ? (
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10 4L6 8H2v4h4l4 4V4zm6 2l-2 2 2 2-2 2 2 2 2-2-2-2 2-2-2-2z"/>
                 </svg>
@@ -431,24 +450,26 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M10 4L6 8H2v4h4l4 4V4zm4 6c0-1.5-1-3-2-3.5v7c1-.5 2-2 2-3.5zm2 0c0-2.5-1.5-4.5-3.5-5.5v11c2-.5 3.5-3 3.5-5.5z"/>
                 </svg>
-              )}
-            </span>
-            <span className="button-label">{audioConfig.musicMuted ? '已静音' : '音乐'}</span>
-          </button>
+              )
+            }
+          >
+            {audioConfig.musicMuted ? '已静音' : '音乐'}
+          </Button>
           
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             className="control-button-with-label settings-button"
             onClick={handleOpenSettings}
-            aria-label="设置"
-            title="设置"
-          >
-            <span className="button-icon">
+            ariaLabel="设置"
+            icon={
               <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10 6c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm8-1l-2-1-1-2-2 1-2-1-2 1-1 2-2 1v2l2 1 1 2 2-1 2 1 2-1 1-2 2-1V5z"/>
               </svg>
-            </span>
-            <span className="button-label">设置</span>
-          </button>
+            }
+          >
+            设置
+          </Button>
         </div>
       </div>
 
@@ -462,27 +483,33 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
 
       {/* 底部按钮 */}
       <div className="bottom-buttons">
-        <button
+        <Button
+          variant="secondary"
           className="game-button restart-button"
           onClick={handleRestart}
-          aria-label="重新开始"
+          ariaLabel="重新开始"
+          icon={
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 2a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V2zm0-2v4l4-4-4-4z"/>
+            </svg>
+          }
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ verticalAlign: 'middle', marginRight: '4px' }}>
-            <path d="M8 2a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V2zm0-2v4l4-4-4-4z"/>
-          </svg>
           重新开始
-        </button>
+        </Button>
         
-        <button
+        <Button
+          variant="ghost"
           className="game-button exit-button"
           onClick={handleExit}
-          aria-label="退出游戏"
+          ariaLabel="退出游戏"
+          icon={
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M6 2v2H2v8h4v2H0V2h6zm4 0l6 6-6 6v-4H6V6h4V2z"/>
+            </svg>
+          }
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ verticalAlign: 'middle', marginRight: '4px' }}>
-            <path d="M6 2v2H2v8h4v2H0V2h6zm4 0l6 6-6 6v-4H6V6h4V2z"/>
-          </svg>
           退出
-        </button>
+        </Button>
       </div>
 
       {/* 设置界面 */}

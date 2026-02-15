@@ -1,36 +1,48 @@
 /**
- * 倒计时显示组件样式
- * Feature: new-year-fireworks-game
+ * 倒计时显示组件样式 - 现代化设计
+ * Feature: countdown-skin-modernization
+ * 
+ * 完整的皮肤系统，每个皮肤都有独特的：
+ * - 字体样式
+ * - 颜色方案
+ * - 3D效果
+ * - 动画效果
+ * - 装饰元素
  */
 
+/* ========================================
+   基础布局
+   ======================================== */
 .countdown-display {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 2rem;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  min-height: 200px;
 }
 
 /* 倒计时标题 */
 .countdown-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #FFD700;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-secondary);
   text-shadow: 
     0 0 10px rgba(255, 215, 0, 0.8),
     0 2px 4px rgba(0, 0, 0, 0.5);
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-2);
+  font-family: var(--font-family-heading);
 }
 
 /* 倒计时容器 */
 .countdown-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-2);
   perspective: 1000px;
-  transition: all 0.3s ease;
+  transition: all var(--duration-normal) var(--ease-out);
 }
 
 /* 时间单位 */
@@ -38,14 +50,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-1);
 }
 
-/* 3D时间值 */
+/* 3D时间值 - 基础样式 */
 .time-value {
   font-size: 4rem;
-  font-weight: bold;
-  color: #FFD700;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-secondary);
   text-shadow: 
     0 1px 0 #ccc,
     0 2px 0 #c9c9c9,
@@ -75,9 +87,9 @@
 
 /* 时间标签 */
 .time-label {
-  font-size: 1rem;
-  color: #FF6B6B;
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  color: var(--color-primary-light);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -85,9 +97,9 @@
 /* 时间分隔符 */
 .time-separator {
   font-size: 3rem;
-  font-weight: bold;
-  color: #FFD700;
-  margin: 0 0.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-secondary);
+  margin: 0 var(--spacing-1);
   animation: pulse 1s ease-in-out infinite;
 }
 
@@ -138,7 +150,300 @@
   }
 }
 
-/* 响应式设计 */
+/* ========================================
+   灯笼皮肤 (Lantern Skin)
+   金色主题 + 楷体 + 灯笼装饰
+   ======================================== */
+.countdown-display--lantern {
+  background: radial-gradient(circle at center, 
+    rgba(255, 215, 0, 0.1) 0%, 
+    transparent 70%);
+  position: relative;
+}
+
+/* 灯笼装饰背景 */
+.countdown-display--lantern::before {
+  content: '🏮';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  opacity: 0.3;
+  animation: swing 3s ease-in-out infinite;
+}
+
+@keyframes swing {
+  0%, 100% {
+    transform: translateX(-50%) rotate(-5deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(5deg);
+  }
+}
+
+.countdown-display--lantern .countdown-title {
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', 'Kai', serif;
+  color: #FFD700;
+  font-size: 2rem;
+  text-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.9),
+    0 0 40px rgba(255, 215, 0, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.2em;
+}
+
+.countdown-display--lantern .time-value {
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', 'Kai', serif !important;
+  color: #FFD700 !important;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.9),
+    0 0 20px rgba(255, 215, 0, 0.7),
+    0 0 30px rgba(255, 215, 0, 0.5),
+    0 0 40px rgba(255, 215, 0, 0.3),
+    0 2px 0 #B8860B,
+    0 4px 0 #9A7209,
+    0 6px 0 #7C5E07,
+    0 8px 0 #5E4A05,
+    0 10px 10px rgba(0, 0, 0, 0.4),
+    0 15px 20px rgba(0, 0, 0, 0.3),
+    0 20px 30px rgba(0, 0, 0, 0.2) !important;
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+}
+
+.countdown-display--lantern .time-separator {
+  color: #FFD700;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.countdown-display--lantern .time-label {
+  color: #FFA500;
+  font-weight: var(--font-weight-bold);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   对联皮肤 (Couplet Skin)
+   红色主题 + 行楷 + 对联装饰
+   ======================================== */
+.countdown-display--couplet {
+  background: linear-gradient(90deg, 
+    rgba(220, 20, 60, 0.1) 0%, 
+    transparent 20%, 
+    transparent 80%, 
+    rgba(220, 20, 60, 0.1) 100%);
+  position: relative;
+  padding: var(--spacing-6) var(--spacing-4);
+}
+
+/* 对联装饰边框 */
+.countdown-display--couplet::before,
+.countdown-display--couplet::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, 
+    #DC143C 0%, 
+    #8B0000 50%, 
+    #DC143C 100%);
+  box-shadow: 
+    0 0 10px rgba(220, 20, 60, 0.6),
+    inset 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+.countdown-display--couplet::before {
+  left: 20px;
+}
+
+.countdown-display--couplet::after {
+  right: 20px;
+}
+
+.countdown-display--couplet .countdown-title {
+  font-family: 'STXingkai', 'FZXingKai-S04S', 'LiSu', '华文行楷', '行楷', 'KaiTi', cursive;
+  color: #DC143C;
+  font-size: 2.2rem;
+  text-shadow: 
+    0 0 20px rgba(220, 20, 60, 0.9),
+    0 0 40px rgba(220, 20, 60, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.3em;
+  font-weight: var(--font-weight-bold);
+}
+
+.countdown-display--couplet .time-value {
+  font-family: 'STXingkai', 'FZXingKai-S04S', 'LiSu', '华文行楷', '行楷', 'KaiTi', cursive !important;
+  color: #DC143C !important;
+  text-shadow: 
+    0 0 10px rgba(220, 20, 60, 0.9),
+    0 0 20px rgba(220, 20, 60, 0.7),
+    0 0 30px rgba(220, 20, 60, 0.5),
+    0 0 40px rgba(220, 20, 60, 0.3),
+    0 2px 0 #8B0000,
+    0 4px 0 #700000,
+    0 6px 0 #550000,
+    0 8px 0 #400000,
+    0 10px 10px rgba(0, 0, 0, 0.4),
+    0 15px 20px rgba(0, 0, 0, 0.3),
+    0 20px 30px rgba(0, 0, 0, 0.2) !important;
+  filter: drop-shadow(0 0 15px rgba(220, 20, 60, 0.6));
+  font-style: italic;
+}
+
+.countdown-display--couplet .time-separator {
+  color: #DC143C;
+  text-shadow: 
+    0 0 10px rgba(220, 20, 60, 0.8),
+    0 0 20px rgba(220, 20, 60, 0.6);
+}
+
+.countdown-display--couplet .time-label {
+  color: #FF6B6B;
+  font-weight: var(--font-weight-bold);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.15em;
+}
+
+/* ========================================
+   生肖皮肤 (Zodiac Skin)
+   紫金主题 + 新魏 + 生肖装饰
+   ======================================== */
+.countdown-display--zodiac {
+  background: radial-gradient(ellipse at center, 
+    rgba(147, 112, 219, 0.15) 0%, 
+    rgba(255, 215, 0, 0.05) 50%,
+    transparent 100%);
+  position: relative;
+}
+
+/* 生肖装饰符号 */
+.countdown-display--zodiac::before {
+  content: '🐉';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  opacity: 0.2;
+  animation: float 4s ease-in-out infinite;
+}
+
+.countdown-display--zodiac .countdown-title {
+  font-family: 'STXinwei', 'FZXinWei-M06S', 'STFangsong', '华文新魏', '新魏', 'FangSong', fantasy;
+  background: linear-gradient(135deg, 
+    #9370DB 0%, 
+    #FFD700 50%, 
+    #9370DB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2rem;
+  text-shadow: none;
+  filter: drop-shadow(0 0 20px rgba(147, 112, 219, 0.6))
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  letter-spacing: 0.25em;
+  font-weight: var(--font-weight-bold);
+}
+
+.countdown-display--zodiac .time-value {
+  font-family: 'STXinwei', 'FZXinWei-M06S', 'STFangsong', '华文新魏', '新魏', 'FangSong', fantasy !important;
+  background: linear-gradient(135deg, 
+    #9370DB 0%, 
+    #DDA0DD 25%,
+    #FFD700 50%,
+    #DDA0DD 75%,
+    #9370DB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease-in-out infinite, float 3s ease-in-out infinite;
+  text-shadow: none !important;
+  filter: drop-shadow(0 0 10px rgba(147, 112, 219, 0.8))
+          drop-shadow(0 0 20px rgba(147, 112, 219, 0.6))
+          drop-shadow(0 0 30px rgba(147, 112, 219, 0.4))
+          drop-shadow(0 2px 0 #6A5ACD)
+          drop-shadow(0 4px 0 #5444AD)
+          drop-shadow(0 6px 0 #49399D)
+          drop-shadow(0 10px 10px rgba(0, 0, 0, 0.4))
+          drop-shadow(0 15px 20px rgba(0, 0, 0, 0.3)) !important;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.countdown-display--zodiac .time-separator {
+  color: #FFD700;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 0 20px rgba(147, 112, 219, 0.6);
+}
+
+.countdown-display--zodiac .time-label {
+  color: #DDA0DD;
+  font-weight: var(--font-weight-bold);
+  text-shadow: 
+    0 0 10px rgba(221, 160, 221, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.2em;
+}
+
+/* ========================================
+   紧急状态下的皮肤特定样式
+   ======================================== */
+.countdown-display--lantern .countdown-container.urgent .time-value {
+  color: #FF4444 !important;
+  text-shadow: 
+    0 0 10px rgba(255, 68, 68, 0.9),
+    0 0 20px rgba(255, 68, 68, 0.7),
+    0 0 30px rgba(255, 68, 68, 0.5),
+    0 0 40px rgba(255, 68, 68, 0.3),
+    0 2px 0 #CC0000,
+    0 4px 0 #AA0000,
+    0 6px 0 #880000,
+    0 10px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.countdown-display--couplet .countdown-container.urgent .time-value {
+  color: #FF0000 !important;
+  text-shadow: 
+    0 0 10px rgba(255, 0, 0, 0.9),
+    0 0 20px rgba(255, 0, 0, 0.7),
+    0 0 30px rgba(255, 0, 0, 0.5),
+    0 0 40px rgba(255, 0, 0, 0.3),
+    0 2px 0 #CC0000,
+    0 4px 0 #990000,
+    0 6px 0 #660000,
+    0 10px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.countdown-display--zodiac .countdown-container.urgent .time-value {
+  background: linear-gradient(135deg, 
+    #FF1493 0%, 
+    #FF69B4 50%,
+    #FF1493 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.9))
+          drop-shadow(0 0 20px rgba(255, 20, 147, 0.7))
+          drop-shadow(0 0 30px rgba(255, 20, 147, 0.5))
+          drop-shadow(0 10px 10px rgba(0, 0, 0, 0.4)) !important;
+}
+
+/* ========================================
+   响应式设计
+   ======================================== */
 @media (max-width: 768px) {
   .time-value {
     font-size: 2.5rem;
@@ -146,15 +451,24 @@
   
   .time-separator {
     font-size: 2rem;
-    margin: 0 0.25rem;
+    margin: 0 var(--spacing-1);
   }
   
   .time-label {
-    font-size: 0.8rem;
+    font-size: var(--font-size-sm);
   }
   
   .countdown-container {
-    gap: 0.5rem;
+    gap: var(--spacing-1);
+  }
+  
+  .countdown-title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .countdown-display--lantern::before,
+  .countdown-display--zodiac::before {
+    font-size: 2rem;
   }
 }
 
@@ -168,170 +482,27 @@
   }
   
   .time-label {
-    font-size: 0.7rem;
+    font-size: var(--font-size-xs);
   }
   
   .countdown-display {
-    padding: 1rem;
+    padding: var(--spacing-2);
   }
-}
-
-/* ========================================
-   皮肤样式 (Skin Styles)
-   ======================================== */
-
-/* 灯笼皮肤 (Lantern Skin) */
-.countdown-display--lantern {
-  /* 使用默认样式，保持现有的金色主题 */
-}
-
-.countdown-display--lantern .time-value {
-  font-family: 'KaiTi', 'STKaiti', '楷体', serif;
-  color: #FFD700;
-  text-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.8),
-    0 0 20px rgba(255, 215, 0, 0.6),
-    0 0 30px rgba(255, 215, 0, 0.4),
-    0 1px 0 #ccc,
-    0 2px 0 #c9c9c9,
-    0 3px 0 #bbb,
-    0 4px 0 #b9b9b9,
-    0 5px 0 #aaa,
-    0 6px 1px rgba(0,0,0,.1),
-    0 0 5px rgba(0,0,0,.1),
-    0 1px 3px rgba(0,0,0,.3),
-    0 3px 5px rgba(0,0,0,.2),
-    0 5px 10px rgba(0,0,0,.25),
-    0 10px 10px rgba(0,0,0,.2),
-    0 20px 20px rgba(0,0,0,.15);
-}
-
-.countdown-display--lantern .countdown-title {
-  color: #FFD700;
-  text-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.8),
-    0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.countdown-display--lantern .time-separator {
-  color: #FFD700;
-}
-
-/* 对联皮肤 (Couplet Skin) */
-.countdown-display--couplet {
-  /* 对联风格：红色主题，传统书法字体 */
-}
-
-.countdown-display--couplet .time-value {
-  font-family: 'STXingkai', 'FZXingKai-S04S', '华文行楷', 'KaiTi', serif;
-  color: #DC143C;
-  text-shadow: 
-    0 0 10px rgba(220, 20, 60, 0.8),
-    0 0 20px rgba(220, 20, 60, 0.6),
-    0 0 30px rgba(220, 20, 60, 0.4),
-    0 1px 0 #8B0000,
-    0 2px 0 #800000,
-    0 3px 0 #700000,
-    0 4px 0 #600000,
-    0 5px 0 #500000,
-    0 6px 1px rgba(0,0,0,.1),
-    0 0 5px rgba(0,0,0,.1),
-    0 1px 3px rgba(0,0,0,.3),
-    0 3px 5px rgba(0,0,0,.2),
-    0 5px 10px rgba(0,0,0,.25),
-    0 10px 10px rgba(0,0,0,.2),
-    0 20px 20px rgba(0,0,0,.15);
-}
-
-.countdown-display--couplet .countdown-title {
-  color: #DC143C;
-  text-shadow: 
-    0 0 10px rgba(220, 20, 60, 0.8),
-    0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.countdown-display--couplet .time-separator {
-  color: #DC143C;
-}
-
-.countdown-display--couplet .time-label {
-  color: #FF6B6B;
-}
-
-/* 生肖皮肤 (Zodiac Skin) */
-.countdown-display--zodiac {
-  /* 生肖风格：紫金主题，装饰性字体 */
-}
-
-.countdown-display--zodiac .time-value {
-  font-family: 'STXinwei', 'FZXinWei-M06S', '华文新魏', 'KaiTi', serif;
-  color: #9370DB;
-  text-shadow: 
-    0 0 10px rgba(147, 112, 219, 0.8),
-    0 0 20px rgba(147, 112, 219, 0.6),
-    0 0 30px rgba(147, 112, 219, 0.4),
-    0 1px 0 #6A5ACD,
-    0 2px 0 #5F4FBD,
-    0 3px 0 #5444AD,
-    0 4px 0 #49399D,
-    0 5px 0 #3E2E8D,
-    0 6px 1px rgba(0,0,0,.1),
-    0 0 5px rgba(0,0,0,.1),
-    0 1px 3px rgba(0,0,0,.3),
-    0 3px 5px rgba(0,0,0,.2),
-    0 5px 10px rgba(0,0,0,.25),
-    0 10px 10px rgba(0,0,0,.2),
-    0 20px 20px rgba(0,0,0,.15);
-}
-
-.countdown-display--zodiac .countdown-title {
-  color: #FFD700;
-  text-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.8),
-    0 0 20px rgba(147, 112, 219, 0.6),
-    0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.countdown-display--zodiac .time-separator {
-  color: #FFD700;
-}
-
-.countdown-display--zodiac .time-label {
-  color: #DDA0DD;
-}
-
-/* 紧急状态下的皮肤特定样式 */
-.countdown-display--lantern .countdown-container.urgent .time-value {
-  color: #FF4444;
-  text-shadow: 
-    0 0 10px rgba(255, 68, 68, 0.8),
-    0 0 20px rgba(255, 68, 68, 0.6),
-    0 0 30px rgba(255, 68, 68, 0.4),
-    0 1px 0 #ccc,
-    0 2px 0 #c9c9c9,
-    0 3px 0 #bbb,
-    0 4px 0 #b9b9b9,
-    0 5px 0 #aaa;
-}
-
-.countdown-display--couplet .countdown-container.urgent .time-value {
-  color: #FF0000;
-  text-shadow: 
-    0 0 10px rgba(255, 0, 0, 0.8),
-    0 0 20px rgba(255, 0, 0, 0.6),
-    0 0 30px rgba(255, 0, 0, 0.4),
-    0 1px 0 #8B0000,
-    0 2px 0 #800000,
-    0 3px 0 #700000;
-}
-
-.countdown-display--zodiac .countdown-container.urgent .time-value {
-  color: #FF1493;
-  text-shadow: 
-    0 0 10px rgba(255, 20, 147, 0.8),
-    0 0 20px rgba(255, 20, 147, 0.6),
-    0 0 30px rgba(255, 20, 147, 0.4),
-    0 1px 0 #C71585,
-    0 2px 0 #B71475,
-    0 3px 0 #A71365;
+  
+  .countdown-title {
+    font-size: var(--font-size-base);
+  }
+  
+  .countdown-display--couplet::before,
+  .countdown-display--couplet::after {
+    width: 2px;
+  }
+  
+  .countdown-display--couplet::before {
+    left: 10px;
+  }
+  
+  .countdown-display--couplet::after {
+    right: 10px;
+  }
 }
