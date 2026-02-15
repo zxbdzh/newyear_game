@@ -86,6 +86,11 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
   // 追踪已触发的成就通知（防止重复触发）
   const triggeredAchievementsRef = useRef<Set<string>>(new Set());
   
+  // 清除已触发成就的函数
+  const clearTriggeredAchievements = () => {
+    triggeredAchievementsRef.current.clear();
+  };
+  
   // 管理器引用
   const achievementManagerRef = useRef<AchievementManager | null>(null);
   const collectionManagerRef = useRef<FireworkCollectionManager | null>(null);
@@ -529,6 +534,9 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
       isActive: false,
       multiplier: 1,
     });
+    
+    // 清除已触发的成就通知记录
+    clearTriggeredAchievements();
     
     // 重置游戏开始时间
     gameStartTimeRef.current = Date.now();
