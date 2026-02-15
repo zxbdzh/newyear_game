@@ -8,6 +8,10 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { CountdownDisplay } from './CountdownDisplay';
 import { SettingsScreen, type SettingsData } from './SettingsScreen';
 import { Button } from './Button';
+import { FireworkGallery } from './FireworkGallery';
+import { AchievementPanel } from './AchievementPanel';
+import { StatisticsPanel } from './StatisticsPanel';
+import { AchievementNotification } from './AchievementNotification';
 import { CountdownEngine } from '../engines/CountdownEngine';
 import { FireworksEngine } from '../engines/FireworksEngine';
 import { ComboSystem } from '../engines/ComboSystem';
@@ -16,11 +20,15 @@ import { StatisticsTracker } from '../services/StatisticsTracker';
 import { StorageService } from '../services/StorageService';
 import { PerformanceOptimizer } from '../services/PerformanceOptimizer';
 import { ThemeManager } from '../services/ThemeManager';
+import { AchievementManager } from '../services/AchievementManager';
+import { FireworkCollectionManager } from '../services/FireworkCollectionManager';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateCombo, resetCombo } from '../store/gameSlice';
 import { recordClick, recordCombo } from '../store/statisticsSlice';
 import { toggleMusicMute, updateAudioConfig } from '../store/audioSlice';
 import type { ComboState } from '../types';
+import type { Achievement } from '../types/AchievementTypes';
+import type { FireworkCollectionItem } from '../types/CollectionTypes';
 import './SinglePlayerGame.css';
 
 interface SinglePlayerGameProps {
@@ -158,14 +166,11 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
           totalClicks: stats.totalClicks || 0,
           maxCombo: stats.maxCombo || 0,
           totalPlayTime: stats.totalPlayTime || 0,
-          fireworksLaunched: stats.fireworksLaunched || 0,
-          gamesPlayed: (stats.gamesPlayed || 0) + 1
+          fireworksLaunched: 0, // 本次游戏发射的烟花数
+          gamesPlayed: 1 // 当前游戏
         });
         
-        // 记录新游戏开始
-        statisticsTracker.recordGamePlayed();
-        
-        // 倒计时归零成就
+        // 更新游戏时长成就
         if (stats.totalPlayTime && stats.totalPlayTime > 0) {
           achievementManager.updateProgress('playtime', stats.totalPlayTime);
         }
