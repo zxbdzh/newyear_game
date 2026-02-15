@@ -699,16 +699,6 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         </button>
       </div>
 
-      {/* 静音按钮 - 右下角 */}
-      <button
-        className={`mute-button-game ${audioConfig.musicMuted ? 'muted' : ''}`}
-        onClick={handleToggleMute}
-        aria-label={audioConfig.musicMuted ? '取消静音' : '静音'}
-        title={audioConfig.musicMuted ? '取消静音' : '静音'}
-      >
-        {audioConfig.musicMuted ? <VolumeX /> : <Volume2 />}
-      </button>
-
       {/* 设置界面 */}
       <SettingsScreen
         isOpen={showSettings}
