@@ -25,4 +25,8 @@ export interface LocalStorageData {
   manualOffset: number;
   /** 最后游玩时间 */
   lastPlayedAt: number;
+  /** 成就数据 */
+  achievements?: Record<string, any>;
+  /** 烟花收藏数据 */
+  fireworkCollection?: Record<string, any>;
 }

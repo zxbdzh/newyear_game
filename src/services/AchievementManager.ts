@@ -5,7 +5,7 @@
  * 管理游戏成就的解锁、进度追踪和通知
  */
 
-import type { Achievement, AchievementData, AchievementType, AchievementTier } from '../types/AchievementTypes';
+import type { Achievement, AchievementData, AchievementType } from '../types/AchievementTypes';
 import type { StorageService } from './StorageService';
 
 /**
@@ -195,7 +195,11 @@ export class AchievementManager {
    */
   async save(): Promise<void> {
     try {
-      const data = await this.storageService.load() || {};
+      const data = await this.storageService.load();
+      if (!data) {
+        console.warn('No data to save achievements to');
+        return;
+      }
       
       // 转换Map为对象
       const achievementsObj: Record<string, Achievement> = {};

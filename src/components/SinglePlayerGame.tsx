@@ -67,6 +67,29 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
   // 设置按钮状态
   const [showSettings, setShowSettings] = useState(false);
   
+  // 新功能面板状态
+  const [showGallery, setShowGallery] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
+  
+  // 成就通知
+  const [achievementNotification, setAchievementNotification] = useState<Achievement | null>(null);
+  
+  // 管理器引用
+  const achievementManagerRef = useRef<AchievementManager | null>(null);
+  const collectionManagerRef = useRef<FireworkCollectionManager | null>(null);
+  
+  // 数据状态
+  const [collectionItems, setCollectionItems] = useState<FireworkCollectionItem[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [statistics, setStatistics] = useState({
+    totalClicks: 0,
+    maxCombo: 0,
+    totalPlayTime: 0,
+    fireworksLaunched: 0,
+    gamesPlayed: 0
+  });
+  
   // 引擎就绪状态
   const [enginesReady, setEnginesReady] = useState(false);
 
@@ -100,6 +123,52 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         const statisticsTracker = new StatisticsTracker(storageService);
         await statisticsTracker.load();
         statisticsTrackerRef.current = statisticsTracker;
+        
+        // 创建成就管理器
+        const achievementManager = new AchievementManager(storageService);
+        await achievementManager.load();
+        achievementManagerRef.current = achievementManager;
+        
+        // 注册成就解锁回调
+        achievementManager.onUnlock((achievement) => {
+          setAchievementNotification(achievement);
+          // 播放解锁音效
+          if (audioController) {
+            audioController.playExplosionSFX();
+          }
+        });
+        
+        // 创建烟花收藏管理器
+        const collectionManager = new FireworkCollectionManager(storageService);
+        await collectionManager.load();
+        collectionManagerRef.current = collectionManager;
+        
+        // 注册烟花解锁回调
+        collectionManager.onUnlock((item) => {
+          console.log('Firework unlocked:', item.name);
+        });
+        
+        // 加载初始数据
+        setAchievements(achievementManager.getAllAchievements());
+        setCollectionItems(collectionManager.getAllItems());
+        
+        // 加载统计数据
+        const stats = await statisticsTracker.getStatistics();
+        setStatistics({
+          totalClicks: stats.totalClicks || 0,
+          maxCombo: stats.maxCombo || 0,
+          totalPlayTime: stats.totalPlayTime || 0,
+          fireworksLaunched: stats.fireworksLaunched || 0,
+          gamesPlayed: (stats.gamesPlayed || 0) + 1
+        });
+        
+        // 记录新游戏开始
+        statisticsTracker.recordGamePlayed();
+        
+        // 倒计时归零成就
+        if (stats.totalPlayTime && stats.totalPlayTime > 0) {
+          achievementManager.updateProgress('playtime', stats.totalPlayTime);
+        }
         
         // 创建倒计时引擎
         const countdownEngine = new CountdownEngine({
@@ -166,6 +235,17 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         statisticsTrackerRef.current.save().catch(console.error);
       }
       
+      // 更新游戏时长成就
+      if (achievementManagerRef.current) {
+        achievementManagerRef.current.updateProgress('playtime', playTime);
+        achievementManagerRef.current.save().catch(console.error);
+      }
+      
+      // 保存收藏管理器
+      if (collectionManagerRef.current) {
+        collectionManagerRef.current.save().catch(console.error);
+      }
+      
       // 清理引擎
       if (countdownEngineRef.current) {
         countdownEngineRef.current.stop();
@@ -226,6 +306,60 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
     }
     dispatch(recordClick());
     
+    // 更新统计数据
+    const newTotalClicks = statistics.totalClicks + 1;
+    const newMaxCombo = Math.max(statistics.maxCombo, newComboState.count);
+    const newFireworksLaunched = statistics.fireworksLaunched + 1;
+    
+    setStatistics(prev => ({
+      ...prev,
+      totalClicks: newTotalClicks,
+      maxCombo: newMaxCombo,
+      fireworksLaunched: newFireworksLaunched
+    }));
+    
+    // 更新成就进度
+    if (achievementManagerRef.current) {
+      achievementManagerRef.current.updateProgress('clicks', newTotalClicks);
+      
+      // 更新连击成就
+      if (newComboState.count > statistics.maxCombo) {
+        achievementManagerRef.current.updateProgress('combo', newComboState.count);
+      }
+      
+      // 更新收藏成就
+      if (collectionManagerRef.current) {
+        const unlockedCount = collectionManagerRef.current.getUnlockedItems().length;
+        achievementManagerRef.current.updateProgress('collection', unlockedCount);
+      }
+      
+      // 刷新成就列表
+      setAchievements(achievementManagerRef.current.getAllAchievements());
+    }
+    
+    // 检查烟花解锁
+    if (collectionManagerRef.current) {
+      // 解锁条件检查
+      if (newTotalClicks >= 100 && !collectionManagerRef.current.isUnlocked('meteor')) {
+        collectionManagerRef.current.unlockFirework('meteor');
+        setCollectionItems(collectionManagerRef.current.getAllItems());
+      }
+      if (newTotalClicks >= 1000 && !collectionManagerRef.current.isUnlocked('heart')) {
+        collectionManagerRef.current.unlockFirework('heart');
+        setCollectionItems(collectionManagerRef.current.getAllItems());
+      }
+      if (newTotalClicks >= 10000 && !collectionManagerRef.current.isUnlocked('fortune')) {
+        collectionManagerRef.current.unlockFirework('fortune');
+        setCollectionItems(collectionManagerRef.current.getAllItems());
+      }
+      
+      // 200连击解锁红包
+      if (newComboState.count >= 200 && !collectionManagerRef.current.isUnlocked('redEnvelope')) {
+        collectionManagerRef.current.unlockFirework('redEnvelope');
+        setCollectionItems(collectionManagerRef.current.getAllItems());
+      }
+    }
+    
     // 根据连击状态发射烟花
     if (newComboState.isActive && newComboState.multiplier >= 2) {
       // 连击增强烟花
@@ -234,7 +368,7 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
       // 普通烟花
       fireworksEngineRef.current.launchFirework(x, y);
     }
-  }, [dispatch]);
+  }, [dispatch, statistics]);
 
   // 鼠标点击事件
   const handleMouseClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -439,6 +573,39 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
           <Button
             variant="ghost"
             size="sm"
+            className="control-button-with-label"
+            onClick={() => setShowGallery(true)}
+            ariaLabel="烟花收藏"
+            icon={<span>✨</span>}
+          >
+            收藏
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            className="control-button-with-label"
+            onClick={() => setShowAchievements(true)}
+            ariaLabel="成就"
+            icon={<span>🏆</span>}
+          >
+            成就
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            className="control-button-with-label"
+            onClick={() => setShowStatistics(true)}
+            ariaLabel="统计"
+            icon={<span>📊</span>}
+          >
+            统计
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
             className="control-button-with-label mute-button"
             onClick={handleToggleMute}
             ariaLabel={audioConfig.musicMuted ? '取消静音' : '静音'}
@@ -538,6 +705,33 @@ export function SinglePlayerGame({ onExit, onGameEnd }: SinglePlayerGameProps) {
         onSave={handleSaveSettings}
         audioController={audioControllerRef.current}
         fireworksEngine={fireworksEngineRef.current}
+      />
+
+      {/* 烟花收藏画廊 */}
+      <FireworkGallery
+        isOpen={showGallery}
+        onClose={() => setShowGallery(false)}
+        items={collectionItems}
+      />
+
+      {/* 成就面板 */}
+      <AchievementPanel
+        isOpen={showAchievements}
+        onClose={() => setShowAchievements(false)}
+        achievements={achievements}
+      />
+
+      {/* 统计面板 */}
+      <StatisticsPanel
+        isOpen={showStatistics}
+        onClose={() => setShowStatistics(false)}
+        statistics={statistics}
+      />
+
+      {/* 成就解锁通知 */}
+      <AchievementNotification
+        achievement={achievementNotification}
+        onClose={() => setAchievementNotification(null)}
       />
     </div>
   );

@@ -109,7 +109,11 @@ export class FireworkCollectionManager {
    */
   async save(): Promise<void> {
     try {
-      const data = await this.storageService.load() || {};
+      const data = await this.storageService.load();
+      if (!data) {
+        console.warn('No data to save collection to');
+        return;
+      }
       
       // 转换Map为对象
       const collectionObj: Record<string, FireworkCollectionItem> = {};
