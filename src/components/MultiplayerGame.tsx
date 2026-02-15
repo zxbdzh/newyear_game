@@ -75,6 +75,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const [showSettings, setShowSettings] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [countdownReady, setCountdownReady] = useState(false);
+  const [isMusicMuted, setIsMusicMuted] = useState(false);
   const [comboState, setComboState] = useState<ComboState>({
     count: 0,
     lastClickTime: 0,
@@ -105,6 +106,11 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
 
     try {
       console.log('[MultiplayerGame] 开始初始化引擎...');
+      
+      // 初始化静音状态
+      if (audioControllerRef.current) {
+        setIsMusicMuted(audioControllerRef.current.isMusicMuted());
+      }
       
       // 创建存储服务
       const storageService = new StorageService();
@@ -515,6 +521,31 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
               title="排行榜"
             >
               <Trophy size={20} />
+            </button>
+            
+            <button
+              className="control-button mute-button"
+              onClick={() => {
+                if (audioControllerRef.current) {
+                  audioControllerRef.current.toggleMusicMute();
+                  setIsMusicMuted(audioControllerRef.current.isMusicMuted());
+                }
+              }}
+              aria-label="静音/取消静音"
+              title="静音/取消静音"
+            >
+              {isMusicMuted ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                </svg>
+              )}
             </button>
             
             <button

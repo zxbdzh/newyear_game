@@ -534,6 +534,15 @@ export class AudioController {
   }
 
   /**
+   * 检查音乐是否静音
+   * 
+   * @returns 是否静音
+   */
+  isMusicMuted(): boolean {
+    return this.config.musicMuted;
+  }
+
+  /**
    * 保存配置
    * 需求：6.4
    * 
