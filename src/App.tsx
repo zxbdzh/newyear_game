@@ -15,6 +15,7 @@ import { setTheme, setSkin } from './store/themeSlice';
 import { LaunchScreen } from './components/LaunchScreen';
 import { ModeSelection } from './components/ModeSelection';
 import { SinglePlayerGame } from './components/SinglePlayerGame';
+import { MultiplayerSetup } from './components/MultiplayerSetup';
 import { MultiplayerGame } from './components/MultiplayerGame';
 import { GameEndScreen } from './components/GameEndScreen';
 import { NetworkSynchronizer } from './services/NetworkSynchronizer';
@@ -41,6 +42,7 @@ function App() {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isServerAvailable, setIsServerAvailable] = useState(false);
+  const [isMultiplayerConnected, setIsMultiplayerConnected] = useState(false);
   
   // 服务实例引用
   const audioControllerRef = useRef<AudioController | null>(null);
@@ -245,6 +247,24 @@ function App() {
   }, [dispatch]);
 
   /**
+   * 处理多人模式连接成功
+   */
+  const handleMultiplayerConnected = useCallback(() => {
+    setIsMultiplayerConnected(true);
+  }, []);
+
+  /**
+   * 处理从多人设置返回
+   */
+  const handleBackFromMultiplayerSetup = useCallback(() => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      dispatch(setMode('menu'));
+      setIsTransitioning(false);
+    }, 300);
+  }, [dispatch]);
+
+  /**
    * 处理退出游戏
    */
   const handleExitGame = useCallback(() => {
@@ -257,6 +277,7 @@ function App() {
   const handleConfirmExit = useCallback(() => {
     setShowExitConfirm(false);
     setIsTransitioning(true);
+    setIsMultiplayerConnected(false);
     
     // 断开网络连接
     if (networkSynchronizerRef.current) {
@@ -317,8 +338,6 @@ function App() {
       <div className={`app-container ${isTransitioning ? 'transitioning' : ''}`}>
         <ModeSelection
           onSelectMode={handleSelectMode}
-          onToggleMute={handleToggleMute}
-          isMuted={isMusicMuted}
           isOnline={isServerAvailable}
         />
       </div>
@@ -371,6 +390,20 @@ function App() {
       );
     }
 
+    // 如果还没连接，显示设置界面
+    if (!isMultiplayerConnected) {
+      return (
+        <div className={`app-container ${isTransitioning ? 'transitioning' : ''}`}>
+          <MultiplayerSetup
+            networkSynchronizer={networkSynchronizerRef.current}
+            onConnected={handleMultiplayerConnected}
+            onBack={handleBackFromMultiplayerSetup}
+          />
+        </div>
+      );
+    }
+
+    // 已连接，显示游戏界面
     return (
       <div className={`app-container ${isTransitioning ? 'transitioning' : ''}`}>
         <MultiplayerGame
