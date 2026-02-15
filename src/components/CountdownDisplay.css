@@ -23,33 +23,63 @@
   min-height: 200px;
 }
 
-/* 倒计时标题 */
+/* 倒计时标题 - 现代化标题 */
 .countdown-title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-secondary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
   text-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.8),
-    0 2px 4px rgba(0, 0, 0, 0.5);
+    0 0 15px rgba(124, 58, 237, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.6);
   text-align: center;
-  margin-bottom: var(--spacing-2);
-  font-family: var(--font-family-heading);
+  margin-bottom: var(--spacing-3);
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  letter-spacing: 0.1em;
 }
 
-/* 倒计时容器 - 固定深色背景确保文字可见 */
+/* 倒计时容器 - 现代化玻璃态设计 */
 .countdown-container {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   perspective: 1000px;
   transition: all var(--duration-normal) var(--ease-out);
-  background: rgba(0, 0, 0, 0.85); /* 固定深色背景 */
-  padding: var(--spacing-3);
-  border-radius: var(--spacing-2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-xl);
-  border: 2px solid rgba(255, 215, 0, 0.3); /* 金色边框增强可见性 */
+  background: linear-gradient(135deg, 
+    rgba(15, 15, 35, 0.95) 0%, 
+    rgba(30, 20, 50, 0.95) 100%);
+  padding: var(--spacing-4);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 40px rgba(124, 58, 237, 0.3);
+  border: 2px solid rgba(124, 58, 237, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景光晕效果 */
+.countdown-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+  animation: rotate 10s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 时间单位 */
@@ -60,28 +90,41 @@
   gap: var(--spacing-1);
 }
 
-/* 3D时间值 - 基础样式，固定金色确保可见 */
+/* 3D时间值 - 现代化数字显示 */
 .time-value {
-  font-size: 4rem;
-  font-weight: var(--font-weight-bold);
-  color: #FFD700 !important; /* 固定金色 */
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #FFFFFF !important;
   text-shadow: 
-    0 0 10px rgba(255, 215, 0, 0.8),
-    0 2px 4px rgba(0, 0, 0, 0.8),
-    0 1px 0 #ccc,
-    0 2px 0 #c9c9c9,
-    0 3px 0 #bbb,
-    0 4px 0 #b9b9b9,
-    0 5px 0 #aaa,
-    0 6px 1px rgba(0,0,0,.1),
-    0 0 5px rgba(0,0,0,.1),
-    0 1px 3px rgba(0,0,0,.3),
-    0 3px 5px rgba(0,0,0,.2),
-    0 5px 10px rgba(0,0,0,.25),
-    0 10px 10px rgba(0,0,0,.2),
-    0 20px 20px rgba(0,0,0,.15);
+    0 0 20px rgba(124, 58, 237, 1),
+    0 0 40px rgba(124, 58, 237, 0.8),
+    0 0 60px rgba(124, 58, 237, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.8),
+    0 2px 0 rgba(124, 58, 237, 0.8),
+    0 4px 0 rgba(100, 40, 200, 0.6);
   transform-style: preserve-3d;
-  animation: float 3s ease-in-out infinite;
+  animation: float 3s ease-in-out infinite, glow-pulse 2s ease-in-out infinite;
+  font-family: 'Orbitron', 'Roboto Mono', monospace;
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow: 
+      0 0 20px rgba(124, 58, 237, 1),
+      0 0 40px rgba(124, 58, 237, 0.8),
+      0 0 60px rgba(124, 58, 237, 0.6),
+      0 4px 8px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    text-shadow: 
+      0 0 30px rgba(124, 58, 237, 1),
+      0 0 60px rgba(124, 58, 237, 0.9),
+      0 0 90px rgba(124, 58, 237, 0.7),
+      0 4px 8px rgba(0, 0, 0, 0.8);
+  }
 }
 
 /* 3D浮动动画 */
@@ -94,24 +137,28 @@
   }
 }
 
-/* 时间标签 - 固定浅色确保可见 */
+/* 时间标签 - 现代化标签 */
 .time-label {
-  font-size: var(--font-size-base);
-  color: #E0E0E0 !important; /* 固定浅灰色 */
-  font-weight: var(--font-weight-semibold);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); /* 增强可见性 */
+  letter-spacing: 0.15em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  font-family: 'Roboto', sans-serif;
 }
 
-/* 时间分隔符 - 固定金色确保可见 */
+/* 时间分隔符 - 现代化分隔符 */
 .time-separator {
-  font-size: 3rem;
-  font-weight: var(--font-weight-bold);
-  color: #FFD700 !important; /* 固定金色 */
-  margin: 0 var(--spacing-1);
-  animation: pulse 1s ease-in-out infinite;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.8);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: rgba(124, 58, 237, 0.8) !important;
+  margin: 0 var(--spacing-2);
+  animation: pulse 1.5s ease-in-out infinite;
+  text-shadow: 
+    0 0 15px rgba(124, 58, 237, 0.9),
+    0 2px 4px rgba(0, 0, 0, 0.8);
+  font-family: 'Orbitron', 'Roboto Mono', monospace;
 }
 
 @keyframes pulse {
