@@ -20,6 +20,12 @@
   gap: 0.75rem;
   padding: 1.5rem;
   min-height: 180px;
+  pointer-events: none;
+}
+
+/* 倒计时容器可以接收点击（如果需要交互） */
+.countdown-container {
+  pointer-events: auto;
 }
 
 /* 倒计时标题 */

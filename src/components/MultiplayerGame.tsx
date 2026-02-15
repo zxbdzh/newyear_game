@@ -68,6 +68,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [countdownReady, setCountdownReady] = useState(false);
   const initializingRef = useRef(false);
   
   // Get current skin from Redux store
@@ -97,6 +98,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         manualOffset: 0,
       });
       countdownEngineRef.current = countdownEngine;
+      setCountdownReady(true);
 
       // 创建烟花引擎
       const engine = new FireworksEngine(canvasRef.current, audioController);
@@ -129,7 +131,15 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
    */
   const handleCanvasClick = useCallback(
     (event: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!engineRef.current || !canvasRef.current) return;
+      console.log('[MultiplayerGame] Canvas clicked!', event);
+      
+      if (!engineRef.current || !canvasRef.current) {
+        console.log('[MultiplayerGame] Engine or canvas not ready', {
+          engine: !!engineRef.current,
+          canvas: !!canvasRef.current
+        });
+        return;
+      }
 
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
@@ -402,7 +412,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
         
         {/* 倒计时显示 */}
         <div className="countdown-wrapper">
-          {countdownEngineRef.current && (
+          {countdownReady && countdownEngineRef.current && (
             <CountdownDisplay
               engine={countdownEngineRef.current}
               skinId={currentSkin.id}

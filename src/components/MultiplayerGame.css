@@ -21,7 +21,7 @@
   height: 100%;
   cursor: crosshair;
   touch-action: none;
-  z-index: 1;
+  z-index: 5;
 }
 
 /* 顶部控制栏 */
@@ -30,7 +30,7 @@
   top: 20px;
   left: 20px;
   right: 20px;
-  z-index: 100;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -43,6 +43,11 @@
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
+  pointer-events: none;
+}
+
+/* 顶部行的子元素可以接收点击 */
+.top-row > * {
   pointer-events: auto;
 }
 
@@ -88,6 +93,11 @@
 .countdown-wrapper {
   display: flex;
   justify-content: center;
+  pointer-events: none;
+}
+
+/* 倒计时内部元素需要接收点击 */
+.countdown-wrapper > * {
   pointer-events: auto;
 }
 
@@ -125,7 +135,7 @@
   border-radius: 16px;
   border: 2px solid rgba(255, 215, 0, 0.5);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  z-index: 90;
+  z-index: 20;
   overflow: hidden;
 }
 
@@ -215,7 +225,7 @@
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 10;
   display: flex;
   gap: 15px;
 }
