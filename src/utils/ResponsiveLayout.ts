@@ -1,11 +1,12 @@
 /**
  * 响应式布局工具
  * Feature: ui-ux-redesign
- * 
+ *
  * 负责处理屏幕尺寸变化和Canvas自动缩放
  */
 
-import { BREAKPOINTS, Breakpoint } from './constants';
+import type { Breakpoint } from './constants';
+import { BREAKPOINTS } from './constants';
 import { useState, useEffect } from 'react';
 
 /**
@@ -116,7 +117,7 @@ export class ResponsiveLayout {
   calculateCanvasScale(size: ScreenSize): CanvasScale {
     // 目标宽高比（16:9）
     const targetAspectRatio = 16 / 9;
-    
+
     let width = size.width;
     let height = size.height;
     let scaleX = 1;
@@ -205,7 +206,10 @@ export class ResponsiveLayout {
   /**
    * 将屏幕坐标转换为Canvas坐标
    */
-  screenToCanvasCoordinates(screenX: number, screenY: number): { x: number; y: number } {
+  screenToCanvasCoordinates(
+    screenX: number,
+    screenY: number
+  ): { x: number; y: number } {
     if (!this.canvas) {
       return { x: screenX, y: screenY };
     }
@@ -225,7 +229,9 @@ export class ResponsiveLayout {
   isInVisibleArea(x: number, y: number): boolean {
     if (!this.canvas) return false;
 
-    return x >= 0 && x <= this.canvas.width && y >= 0 && y <= this.canvas.height;
+    return (
+      x >= 0 && x <= this.canvas.width && y >= 0 && y <= this.canvas.height
+    );
   }
 
   /**
@@ -239,16 +245,20 @@ export class ResponsiveLayout {
    * 检查是否为移动设备
    */
   isMobile(): boolean {
-    return this.currentSize.width >= BREAKPOINTS.mobile.min && 
-           this.currentSize.width <= BREAKPOINTS.mobile.max;
+    return (
+      this.currentSize.width >= BREAKPOINTS.mobile.min &&
+      this.currentSize.width <= BREAKPOINTS.mobile.max
+    );
   }
 
   /**
    * 检查是否为平板设备
    */
   isTablet(): boolean {
-    return this.currentSize.width >= BREAKPOINTS.tablet.min && 
-           this.currentSize.width <= BREAKPOINTS.tablet.max;
+    return (
+      this.currentSize.width >= BREAKPOINTS.tablet.min &&
+      this.currentSize.width <= BREAKPOINTS.tablet.max
+    );
   }
 
   /**
@@ -263,15 +273,15 @@ export class ResponsiveLayout {
    */
   getCurrentBreakpoint(): Breakpoint {
     const width = this.currentSize.width;
-    
+
     if (width >= BREAKPOINTS.mobile.min && width <= BREAKPOINTS.mobile.max) {
       return 'mobile';
     }
-    
+
     if (width >= BREAKPOINTS.tablet.min && width <= BREAKPOINTS.tablet.max) {
       return 'tablet';
     }
-    
+
     return 'desktop';
   }
 
@@ -320,14 +330,14 @@ export function getCurrentBreakpoint(): Breakpoint {
 
 /**
  * React Hook: 监听当前断点变化
- * 
+ *
  * @returns 当前断点 ('mobile' | 'tablet' | 'desktop')
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
  *   const breakpoint = useBreakpoint();
- *   
+ *
  *   return (
  *     <div>
  *       {breakpoint === 'mobile' && <MobileLayout />}
@@ -339,7 +349,7 @@ export function getCurrentBreakpoint(): Breakpoint {
  * ```
  */
 export function useBreakpoint(): Breakpoint {
-  const [breakpoint, setBreakpoint] = useState<Breakpoint>(() => 
+  const [breakpoint, setBreakpoint] = useState<Breakpoint>(() =>
     responsiveLayout.getCurrentBreakpoint()
   );
 
@@ -362,14 +372,14 @@ export function useBreakpoint(): Breakpoint {
 
 /**
  * React Hook: 监听视口尺寸变化
- * 
+ *
  * @returns 当前视口尺寸信息
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
  *   const viewport = useViewportSize();
- *   
+ *
  *   return (
  *     <div>
  *       Width: {viewport.width}px, Height: {viewport.height}px
@@ -379,7 +389,7 @@ export function useBreakpoint(): Breakpoint {
  * ```
  */
 export function useViewportSize(): ScreenSize {
-  const [size, setSize] = useState<ScreenSize>(() => 
+  const [size, setSize] = useState<ScreenSize>(() =>
     responsiveLayout.getScreenSize()
   );
 
@@ -401,7 +411,7 @@ export function useViewportSize(): ScreenSize {
 
 /**
  * 媒体查询辅助函数：检查是否匹配指定断点
- * 
+ *
  * @param breakpoint - 断点名称
  * @returns 是否匹配该断点
  */

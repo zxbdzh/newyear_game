@@ -1,7 +1,7 @@
 /**
  * 默认设置值
  * Feature: settings-ui-fixes
- * 
+ *
  * 提供所有设置的默认值
  */
 
@@ -15,12 +15,11 @@ export function getDefaultSettings(): LocalStorageData {
   return {
     statistics: {
       totalClicks: 0,
-      totalFireworks: 0,
       maxCombo: 0,
       totalPlayTime: 0,
-      gamesPlayed: 0,
-      achievements: [],
-      milestones: [],
+      unlockedFireworks: new Set<string>(),
+      achievementsUnlocked: new Set<string>(),
+      lastPlayedAt: Date.now(),
     },
     audioConfig: {
       musicVolume: 0.7,
@@ -28,6 +27,7 @@ export function getDefaultSettings(): LocalStorageData {
       musicMuted: false,
       sfxMuted: false,
     },
+    manualOffset: 0,
     themeId: 'new-year-dinner',
     skinId: 'lantern',
     performanceProfile: {
@@ -39,7 +39,6 @@ export function getDefaultSettings(): LocalStorageData {
       enableGlow: true,
       enableTrails: false,
     },
-    manualOffset: 0,
     lastPlayedAt: Date.now(),
   };
 }
@@ -50,9 +49,11 @@ export function getDefaultSettings(): LocalStorageData {
  * @param savedData - 从存储加载的数据（可能不完整）
  * @returns 完整的设置数据
  */
-export function mergeWithDefaults(savedData: Partial<LocalStorageData> | null): LocalStorageData {
+export function mergeWithDefaults(
+  savedData: Partial<LocalStorageData> | null
+): LocalStorageData {
   const defaults = getDefaultSettings();
-  
+
   if (!savedData) {
     return defaults;
   }

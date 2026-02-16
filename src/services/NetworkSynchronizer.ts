@@ -556,7 +556,7 @@ export class NetworkSynchronizer {
     );
 
     // Pong响应
-    this.socket.on('pong', (data: { timestamp: number }) => {
+    this.socket.on('pong', (_data: { timestamp: number }) => {
       const latency = Date.now() - this.lastPingTime;
       this.updateLatency(latency);
     });

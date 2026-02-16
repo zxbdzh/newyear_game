@@ -2,7 +2,7 @@
  * 移动端优化工具
  * Feature: new-year-fireworks-game
  * 需求：10.1, 10.5
- * 
+ *
  * 提供移动端专用的性能优化功能：
  * - 自动使用低性能配置
  * - 禁用某些特效
@@ -124,7 +124,7 @@ export class MobileOptimizer {
 
   /**
    * 获取优化后的性能配置
-   * 
+   *
    * @param baseProfile - 基础性能配置
    * @returns 优化后的性能配置
    */
@@ -136,10 +136,18 @@ export class MobileOptimizer {
     return {
       ...baseProfile,
       level: 'low', // 强制使用低性能配置
-      maxParticles: Math.min(baseProfile.maxParticles, this.config.maxParticles),
-      maxFireworks: Math.min(baseProfile.maxFireworks, this.config.maxFireworks),
+      maxParticles: Math.min(
+        baseProfile.maxParticles,
+        this.config.maxParticles
+      ),
+      maxFireworks: Math.min(
+        baseProfile.maxFireworks,
+        this.config.maxFireworks
+      ),
       enableGlow: this.config.disableGlow ? false : baseProfile.enableGlow,
-      enableTrails: this.config.disableTrails ? false : baseProfile.enableTrails,
+      enableTrails: this.config.disableTrails
+        ? false
+        : baseProfile.enableTrails,
       useWebGL: false, // 移动设备禁用WebGL以提高兼容性
       particleSize: Math.max(2, baseProfile.particleSize - 1), // 减小粒子尺寸
     };
@@ -147,7 +155,7 @@ export class MobileOptimizer {
 
   /**
    * 优化Canvas尺寸
-   * 
+   *
    * @param canvas - Canvas元素
    */
   optimizeCanvasSize(canvas: HTMLCanvasElement): void {
@@ -177,7 +185,7 @@ export class MobileOptimizer {
 
   /**
    * 更新移动端优化配置
-   * 
+   *
    * @param config - 新配置
    */
   updateConfig(config: Partial<MobileOptimizationConfig>): void {
@@ -196,7 +204,7 @@ export class MobileOptimizer {
 
   /**
    * 获取推荐的触摸目标最小尺寸（像素）
-   * 
+   *
    * 根据WCAG 2.1标准，触摸目标应至少为44x44像素
    */
   getMinTouchTargetSize(): number {
@@ -230,7 +238,7 @@ export class MobileOptimizer {
 
   /**
    * 获取推荐的Canvas缩放比例
-   * 
+   *
    * 考虑设备像素比和性能
    */
   getRecommendedCanvasScale(): number {
@@ -239,7 +247,7 @@ export class MobileOptimizer {
     }
 
     const dpr = this.getDevicePixelRatio();
-    
+
     if (dpr > 2) {
       // 高DPI设备（如Retina屏幕）
       return 0.5; // 使用50%分辨率以保持性能
@@ -252,7 +260,7 @@ export class MobileOptimizer {
 
   /**
    * 禁用移动端的某些浏览器默认行为
-   * 
+   *
    * - 禁用双击缩放
    * - 禁用长按菜单
    * - 禁用拖拽选择
@@ -264,16 +272,21 @@ export class MobileOptimizer {
 
     // 禁用双击缩放
     element.style.touchAction = 'none';
-    
+
     // 禁用长按菜单
+    // @ts-expect-error TS2339 - webkitTouchCallout is a non-standard CSS property
     element.style.webkitTouchCallout = 'none';
     element.style.webkitUserSelect = 'none';
     element.style.userSelect = 'none';
-    
+
     // 禁用拖拽
-    element.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-    }, { passive: false });
+    element.addEventListener(
+      'touchmove',
+      (e) => {
+        e.preventDefault();
+      },
+      { passive: false }
+    );
   }
 
   /**
@@ -313,12 +326,18 @@ export class MobileOptimizer {
     left: number;
   } {
     const style = getComputedStyle(document.documentElement);
-    
+
     return {
       top: parseInt(style.getPropertyValue('env(safe-area-inset-top)') || '0'),
-      right: parseInt(style.getPropertyValue('env(safe-area-inset-right)') || '0'),
-      bottom: parseInt(style.getPropertyValue('env(safe-area-inset-bottom)') || '0'),
-      left: parseInt(style.getPropertyValue('env(safe-area-inset-left)') || '0'),
+      right: parseInt(
+        style.getPropertyValue('env(safe-area-inset-right)') || '0'
+      ),
+      bottom: parseInt(
+        style.getPropertyValue('env(safe-area-inset-bottom)') || '0'
+      ),
+      left: parseInt(
+        style.getPropertyValue('env(safe-area-inset-left)') || '0'
+      ),
     };
   }
 }
