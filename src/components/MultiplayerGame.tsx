@@ -24,7 +24,8 @@ import { NetworkSynchronizer } from '../services/NetworkSynchronizer';
 import { StorageService } from '../services/StorageService';
 import { PerformanceOptimizer } from '../services/PerformanceOptimizer';
 import { CountdownEngine } from '../engines/CountdownEngine';
-import { useAppSelector } from '../store/hooks';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { toggleMusicMute } from '../store/audioSlice';
 import type { FireworkAction, RoomInfo, PlayerInfo } from '../types/NetworkTypes';
 import type { ComboState } from '../types';
 import './MultiplayerGame.css';
@@ -82,9 +83,11 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
   });
   const [hasActiveComboNotification, setHasActiveComboNotification] = useState(false);
   const initializingRef = useRef(false);
+  const dispatch = useAppDispatch();
   
-  // Get current skin from Redux store
+  // Get current skin and audio state from Redux store
   const currentSkin = useAppSelector((state) => state.theme.currentSkin);
+  const isMusicMuted = useAppSelector((state) => state.audio.config.musicMuted);
 
   /**
    * 初始化烟花引擎
@@ -223,7 +226,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       const now = Date.now();
       
       // 注册点击到连击系统并发射烟花
-      let fireworkId: string;
+      let fireworkId: string | string[];
       if (comboSystemRef.current) {
         const newComboState = comboSystemRef.current.registerClick(now);
         setComboState(newComboState);
@@ -241,9 +244,10 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
       
       console.log('[MultiplayerGame] 本地发射烟花:', fireworkId, { x, y });
 
-      // 同步到其他玩家
+      // 同步到其他玩家 - 只发送第一个烟花ID
       try {
-        networkSynchronizer.sendFireworkAction(x, y, fireworkId);
+        const idToSend = Array.isArray(fireworkId) ? fireworkId[0] : fireworkId;
+        networkSynchronizer.sendFireworkAction(x, y, idToSend);
       } catch (error) {
         console.error('[MultiplayerGame] 发送烟花动作失败:', error);
       }
@@ -515,14 +519,27 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({
             <button
               className="control-button mute-button"
               onClick={() => {
+                // Update Redux state
+                dispatch(toggleMusicMute());
+                
+                // Sync with AudioController
                 if (audioControllerRef.current) {
                   audioControllerRef.current.toggleMusicMute();
+                  
+                  // Handle music playback based on new state
+                  if (isMusicMuted) {
+                    // Was muted, now unmuted - play music
+                    audioControllerRef.current.playMusic();
+                  } else {
+                    // Was unmuted, now muted - stop music
+                    audioControllerRef.current.stopMusic();
+                  }
                 }
               }}
               aria-label="静音/取消静音"
               title="静音/取消静音"
             >
-              {audioControllerRef.current?.isMusicMuted() ? (
+              {isMusicMuted ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M11 5L6 9H2v6h4l5 4V5z" />
                   <line x1="23" y1="9" x2="17" y2="15" />
