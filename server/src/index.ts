@@ -63,6 +63,9 @@ const httpServer = createServer(app);
 // 创建Socket.io服务器
 const socketPath = process.env.SOCKET_IO_PATH || '/socket.io/';
 
+console.log('[服务器配置] Socket.io path:', socketPath);
+console.log('[服务器配置] CORS origin:', config.corsOrigin);
+
 const io = new Server(httpServer, {
   path: socketPath,
   cors: {
@@ -77,6 +80,14 @@ const io = new Server(httpServer, {
   // 允许升级
   allowUpgrades: true,
 });
+
+console.log('[服务器配置] Socket.io 服务器已创建');
+console.log('[服务器配置] 监听的 path:', socketPath);
+console.log('[服务器配置] 监听的端口:', config.port);
+console.log(
+  '[服务器配置] 完整的 WebSocket 地址:',
+  `ws://localhost:${config.port}${socketPath}`
+);
 
 // 连接的客户端映射
 const connectedClients = new Map<string, ClientInfo>();
