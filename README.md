@@ -39,13 +39,37 @@
 
 ### 环境变量
 
-创建 `.env` 文件配置服务器地址（可选）：
+**前端配置（客户端）**
+
+创建 `.env` 文件配置服务器地址：
 
 ```env
+# 开发环境
 VITE_SERVER_URL=http://localhost:3001
+
+# 生产环境示例
+# VITE_SERVER_URL=https://your-server.com:3001
 ```
 
 如未配置，默认使用 `http://localhost:3001`。
+
+**后端配置（server目录）**
+
+进入 `server` 目录，复制 `.env.example` 为 `.env`：
+
+```bash
+cd server
+cp .env.example .env
+```
+
+配置服务器端口和CORS：
+
+```env
+PORT=3001
+CORS_ORIGIN=http://localhost:5173
+HEARTBEAT_INTERVAL=25000
+HEARTBEAT_TIMEOUT=30000
+```
 
 ### 前端开发
 
