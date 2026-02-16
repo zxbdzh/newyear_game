@@ -369,13 +369,9 @@ export function SinglePlayerGame({
       if (achievementManagerRef.current) {
         achievementManagerRef.current.updateProgress('clicks', newTotalClicks);
 
-        // 更新连击成就
-        if (newComboState.count > statistics.maxCombo) {
-          achievementManagerRef.current.updateProgress(
-            'combo',
-            newComboState.count
-          );
-        }
+        // 更新连击成就 - 使用newMaxCombo而不是newComboState.count
+        // 这样可以确保历史最高连击也会触发成就更新
+        achievementManagerRef.current.updateProgress('combo', newMaxCombo);
 
         // 更新收藏成就
         if (collectionManagerRef.current) {
