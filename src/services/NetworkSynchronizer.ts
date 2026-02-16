@@ -153,7 +153,15 @@ export class NetworkSynchronizer {
     return new Promise((resolve, reject) => {
       try {
         // 创建Socket.io连接
+        // 提取服务器URL中的路径前缀，用于配置Socket.io的path参数
+        const serverUrlObj = new URL(this.config.serverUrl);
+        const pathPrefix = serverUrlObj.pathname.replace(/\/$/, ''); // 移除尾部斜杠
+        const socketPath = pathPrefix
+          ? `${pathPrefix}/socket.io/`
+          : '/socket.io/';
+
         this.socket = io(this.config.serverUrl, {
+          path: socketPath,
           transports: ['websocket', 'polling'],
           reconnection: false, // 手动处理重连
           timeout: 10000,
