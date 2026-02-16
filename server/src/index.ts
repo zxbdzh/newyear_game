@@ -61,6 +61,7 @@ const httpServer = createServer(app);
 
 // 创建Socket.io服务器
 const io = new Server(httpServer, {
+  path: process.env.SOCKET_IO_PATH || '/socket.io/',
   cors: {
     origin: config.corsOrigin,
     credentials: true,
@@ -115,7 +116,11 @@ io.on('connection', (socket: Socket) => {
   // 处理加入房间请求
   socket.on(
     'join_room',
-    (data: { nickname: string; roomType: 'public' | 'private'; code?: string }) => {
+    (data: {
+      nickname: string;
+      roomType: 'public' | 'private';
+      code?: string;
+    }) => {
       try {
         const { nickname, roomType, code } = data;
 
@@ -254,7 +259,7 @@ io.on('connection', (socket: Socket) => {
   socket.on('leave_room', () => {
     const client = connectedClients.get(socket.id);
     const session = sessionManager.getSession(socket.id);
-    
+
     if (!client || !client.roomId) {
       return;
     }
@@ -295,7 +300,9 @@ io.on('connection', (socket: Socket) => {
       });
     }
 
-    console.log(`[房间] 玩家 ${session?.nickname || client.nickname} (${socket.id}) 离开房间 ${roomId}`);
+    console.log(
+      `[房间] 玩家 ${session?.nickname || client.nickname} (${socket.id}) 离开房间 ${roomId}`
+    );
   });
 
   // 处理烟花动作
@@ -304,7 +311,7 @@ io.on('connection', (socket: Socket) => {
     (data: { x: number; y: number; fireworkTypeId: string }) => {
       const client = connectedClients.get(socket.id);
       const session = sessionManager.getSession(socket.id);
-      
+
       if (!client || !client.roomId) {
         return;
       }
@@ -355,7 +362,7 @@ io.on('connection', (socket: Socket) => {
   socket.on('chat_message', (data: { message: string }) => {
     const client = connectedClients.get(socket.id);
     const session = sessionManager.getSession(socket.id);
-    
+
     if (!client || !client.roomId) {
       return;
     }
@@ -371,14 +378,16 @@ io.on('connection', (socket: Socket) => {
       timestamp: Date.now(),
     });
 
-    console.log(`[聊天] ${session?.nickname || client.nickname} (${socket.id}): ${data.message}`);
+    console.log(
+      `[聊天] ${session?.nickname || client.nickname} (${socket.id}): ${data.message}`
+    );
   });
 
   // 处理连击播报
   socket.on('combo_milestone', (data: { comboCount: number }) => {
     const client = connectedClients.get(socket.id);
     const session = sessionManager.getSession(socket.id);
-    
+
     if (!client || !client.roomId) {
       return;
     }
@@ -391,7 +400,9 @@ io.on('connection', (socket: Socket) => {
       timestamp: Date.now(),
     });
 
-    console.log(`[连击] ${session?.nickname || client.nickname} (${socket.id}) 达成 ${data.comboCount} 连击`);
+    console.log(
+      `[连击] ${session?.nickname || client.nickname} (${socket.id}) 达成 ${data.comboCount} 连击`
+    );
   });
 
   // 处理断开连接
@@ -400,12 +411,12 @@ io.on('connection', (socket: Socket) => {
 
     const client = connectedClients.get(socket.id);
     const session = sessionManager.getSession(socket.id);
-    
+
     if (client) {
       // 如果客户端在房间中，需要通知其他玩家并清理
       if (client.roomId) {
         const room = roomManager.getRoom(client.roomId);
-        
+
         // 从房间移除玩家
         roomManager.removePlayerFromRoom(client.roomId, socket.id);
 
